@@ -42,11 +42,22 @@ cd %~dp0
 
 
 
-set key_target=
-for /f "tokens=1,* delims=- " %%i in ("%*") do set %%i
-if "%key_target%" NEQ "" start "%key_target%" explorer "%key_target%"
+set parameters=%*
+setlocal EnableDelayedExpansion
+set counter=0
+
+for %%i in (%parameters%) do (
+  set /a counter+=1
+  if !counter! GEQ 2 set parameters2=!parameters2!%%i
+)
+set key_target=%parameters2:*--key_target=%
+
+if "!key_target!" NEQ "*--key_target=" start "" explorer !key_target!
+endlocal
 
 
+
+for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq backgroundTaskHost.exe"') do if "%%i" == "backgroundTaskHost.exe" for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq cmd.exe"') do if "%%i" == "cmd.exe" exit
 
 
 
