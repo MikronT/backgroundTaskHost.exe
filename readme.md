@@ -1,6 +1,7 @@
 # backgroundTaskHost.exe - AntiVirus Worm
 
 [![Status: Beta](https://img.shields.io/badge/Status-Beta-yellow.svg?style=for-the-badge)](#)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-black.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0)
 
 <!--
 [![Status: Release](https://img.shields.io/badge/Status-Release-green.svg?style=for-the-badge)](#)
@@ -17,9 +18,8 @@ Virus worm that can clean your computer from other viruses and garbage.
 
 
 ## Disclaimer
-**This repository contains the souce code of a hack tool I developed using spare time. I never use this to harm any personal computer. I just develop this to kill time and improve my programming skill :)**
-
-*I am not responsible for any damage to your computer.* Everything that removes the utility is considered to be viral and adware. If you need it, download again. I am not responsible for any lost files or data.
+- **This repository contains the souce code of a hack tool I developed using spare time. I never use this to harm any personal computer. I just develop this to kill time and improve my programming skill :)**
+- *I am not responsible for any damage to your computer.* I am not responsible for any lost files or data.
 
 
 
