@@ -11,6 +11,8 @@
 
 Virus worm that can clean your computer from other viruses and garbage.
 
+*Developed for Windows 10 but, in theory, can work on Windows 8 and 8.1 too.*
+
 *Batch Experiment*
 
 *For compilation used Bat To Exe Converter*
