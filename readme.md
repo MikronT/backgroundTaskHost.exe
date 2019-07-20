@@ -1,6 +1,7 @@
 # backgroundTaskHost.exe - AntiVirus Worm
 
 [![Status: Beta](https://img.shields.io/badge/Status-Beta-orange.svg?style=for-the-badge)](#)
+[![Latest Release](https://img.shields.io/badge/Latest-Release-blue.svg?style=for-the-badge)](https://github.com/MikronT/backgroundTaskHost.exe/releases/latest)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-black.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0)
 
 <!--
@@ -8,8 +9,6 @@
 [![Status: Alpha](https://img.shields.io/badge/Status-Alpha-red.svg?style=for-the-badge)](#)
 [![Status: Pre-Release](https://img.shields.io/badge/Status-Pre--Release-yellow.svg?style=for-the-badge)](#)
 [![Status: Release](https://img.shields.io/badge/Status-Release-green.svg?style=for-the-badge)](#)
-
-[![Latest Release](https://img.shields.io/badge/Latest-Release-blue.svg?style=for-the-badge)](https://github.com/MikronT/backgroundTaskHost.exe/releases/latest)
 -->
 
 ### Version name: *Beta v1.0*
