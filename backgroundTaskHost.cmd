@@ -57,7 +57,7 @@ endlocal
 
 
 
-for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq backgroundTaskHost.exe"') do if "%%i" == "backgroundTaskHost.exe" for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq cmd.exe"') do if "%%i" == "cmd.exe" exit
+for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq %~nx0"') do if "%%i" == "%~nx0" for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq cmd.exe"') do if "%%i" == "cmd.exe" exit
 
 
 
