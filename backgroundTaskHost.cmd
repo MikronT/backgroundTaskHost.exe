@@ -53,7 +53,6 @@ for %%i in (%parameters%) do (
 set key_target=%parameters2:*--key_target=%
 
 if "!key_target!" NEQ "*--key_target=" start "" explorer !key_target!
-endlocal
 
 
 
@@ -97,7 +96,13 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
           if "%%x" NEQ "$RECYCLE.BIN" if "%%x" NEQ "FOUND.000" if "%%x" NEQ "Recycled" if "%%x" NEQ "System Volume Information" (
             attrib +h "%%i:\%%x"
             if not exist "%%i:\%%x.lnk" (
-              %module_shortcut% /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"--key_target="""%%i:\%%x"""" /i:"%WinDir%\System32\SHELL32.dll,3"
+              set counter=0
+              for /f "delims=" %%y in ('dir "%%i:\%%x\*" /b 2^>nul') do set /a counter+=1
+              if "!counter!" == "0" (
+                %module_shortcut% /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"--key_target="""%%i:\%%x"""" /i:"%WinDir%\System32\shell32.dll,3"
+              ) else (
+                %module_shortcut% /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"--key_target="""%%i:\%%x"""" /i:"%WinDir%\System32\imageres.dll,153"
+              )
             )
           )
         )
