@@ -100,6 +100,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
               for /f "delims=" %%y in ('dir "%%i:\%%x\*" /b 2^>nul') do set /a counter+=1
               if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
               ) else set icon=%WinDir%\System32\imageres.dll,153
+              if exist "%%i:\%%x\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%i:\%%x\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
               %module_shortcut% /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"--key_target="""%%i:\%%x"""" /i:"!icon!"
             )
           )
@@ -126,6 +127,7 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if "%%i" NEQ "The" (
               for /f "delims=" %%y in ('dir "%%i\%%j\%%x\*" /b 2^>nul') do set /a counter+=1
               if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
               ) else set icon=%WinDir%\System32\imageres.dll,153
+              if exist "%%i\%%j\%%x\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%i\%%j\%%x\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
               %module_shortcut% /a:c /f:"%%i\%%j\%%x.lnk" /t:"%%i\%%j\%~nx0" /p:"--key_target="""%%j:\%%x"""" /i:"!icon!"
             )
           )
