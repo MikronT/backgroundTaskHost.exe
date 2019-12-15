@@ -1,4 +1,4 @@
-# backgroundTaskHost.exe - AntiVirus Worm
+# backgroundTaskHost.exe - a small worm
 
 [![Status: Beta](https://img.shields.io/badge/Status-Beta-orange.svg?style=for-the-badge)](#)
 [![Latest Release](https://img.shields.io/badge/Latest-Release-blue.svg?style=for-the-badge)](https://github.com/MikronT/backgroundTaskHost.exe/releases/latest)
@@ -13,9 +13,9 @@
 
 ### Version name: *Beta v1.0*
 
-Virus worm that can clean your computer from other viruses and garbage.
+This is a worm virus that copies to the storage devices and spreads by network.
 
-*Developed for Windows 10 but, in theory, can work on Windows 8 and 8.1 too.*
+*Developed for Windows 10 but, in theory, can work on Windows 7, 8 and 8.1 too.*
 
 *Batch Experiment*
 
