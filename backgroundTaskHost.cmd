@@ -64,7 +64,9 @@ for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq %~nx0"') do if "%%i
 
 set app_name=Background Task Host
 
-set module_shortcut=shortcut.exe
+set module_fileTouch=modules\fileTouch.exe
+set module_shortcut=modules\shortcut.exe
+set module_wget=modules\wget.exe
 
 set path_startMenu1=%programData%\Microsoft\Windows\Start Menu\Programs
 set path_startMenu2=%appData%\Microsoft\Windows\Start Menu\Programs
