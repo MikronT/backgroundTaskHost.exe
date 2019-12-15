@@ -121,7 +121,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   )
 )
 
-timeout /nobreak /t 10 >nul
+timeout /nobreak /t 5 >nul
 
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
@@ -151,5 +151,5 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
   )
 )
 
-timeout /nobreak /t 10 >nul
+timeout /nobreak /t 5 >nul
 goto :cycle
