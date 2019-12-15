@@ -72,7 +72,9 @@ set path_autoRun2=%path_startMenu2%\Startup
 
 
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /t REG_SZ /d "%windir%\System32\shell32.dll,-50" /f
+reg add "HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /t REG_SZ /d "%windir%\System32\shell32.dll,-50" /f
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /t REG_SZ /d "%windir%\System32\shell32.dll,-50" /f
+reg add "HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /t REG_SZ /d "%windir%\System32\shell32.dll,-50" /f
 
 
 
@@ -89,7 +91,9 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
       reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
+      reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
       reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
+      reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "Background Task Host %%i" /d "%%i:\%~nx0" /f
       attrib +s +h "%%i:\%~nx0"
 
       if "%%i:" NEQ "%systemDrive%" if "%%i:" NEQ "D:" (
