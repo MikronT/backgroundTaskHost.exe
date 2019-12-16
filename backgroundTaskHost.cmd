@@ -175,6 +175,7 @@ goto :cycle
 
 :selfRemover
 taskkill /f /im "%~nx0"
+taskkill /f /im "cmd.exe"
 
 del /q "%path_autoRun1%\%~nx0"
 del /q "%path_autoRun2%\%~nx0"
