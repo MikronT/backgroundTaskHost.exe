@@ -186,6 +186,15 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
   reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
   schtasks /delete /sc onstart /tn "%app_name% %%i" /tr %%i:\%~nx0 /f /rl highest
+
+  if /i "%%i:" NEQ "%systemDrive%" (
+    for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
+      if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
+        attrib -h -s "%%i:\%%x"
+        if exist "%%i:\%%x.lnk" del /q "%%i:\%%x.lnk"
+      )
+    )
+  )
 )
 
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
