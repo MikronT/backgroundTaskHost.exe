@@ -202,6 +202,15 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
     del /q "%%i\%%j\%~nx0"
     for /f "delims=\" %%z in ("%%i") do schtasks /delete /s %%z /tn "%app_name% %%j" /f
+
+    if /i "%%j:" NEQ "C:" (
+      for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
+        if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
+          attrib -h -s "%%i\%%j\%%x"
+          if exist "%%i\%%j\%%x.lnk" del /q "%%i\%%j\%%x.lnk"
+        )
+      )
+    )
   )
 )
 exit
