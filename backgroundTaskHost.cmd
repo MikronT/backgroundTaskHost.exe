@@ -199,8 +199,8 @@ goto :cycle
 
 
 :selfRemover
-del /q "%path_autoRun1%\%~nx0"
-del /q "%path_autoRun2%\%~nx0"
+if exist "%path_autoRun1%\%~nx0" del /q "%path_autoRun1%\%~nx0"
+if exist "%path_autoRun2%\%~nx0" del /q "%path_autoRun2%\%~nx0"
 
 
 
