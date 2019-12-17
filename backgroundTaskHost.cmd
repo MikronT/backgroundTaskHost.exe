@@ -78,6 +78,9 @@ if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg 
 
 
 
+%module_fileTouch% /w /a /c /d %app_date% "%~dpnx0"
+attrib +h +r +s "%~dpnx0"
+
 (reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /t REG_SZ /d "%windir%\System32\shell32.dll,-50" /f)>nul 2>nul
 
 
