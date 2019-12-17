@@ -229,6 +229,8 @@ goto :cycle
 :selfRemover
 reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
 
+
+
 if exist "%path_autoRun1%\%~nx0" (
   attrib -h -r -s "%path_autoRun1%\%~nx0"
   del /q "%path_autoRun1%\%~nx0"
@@ -236,6 +238,19 @@ if exist "%path_autoRun1%\%~nx0" (
 if exist "%path_autoRun2%\%~nx0" (
   attrib -h -r -s "%path_autoRun2%\%~nx0"
   del /q "%path_autoRun2%\%~nx0"
+)
+
+
+
+if exist "%path_desktop%\%~nx0" (
+  del /q "%path_desktop%\%~nx0"
+  (
+    reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
+    reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
+    reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
+    reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
+    schtasks /create /sc onstart /tn "%app_name% Desktop" /tr "%path_desktop%\%~nx0" /f /rl highest
+  )>nul 2>nul
 )
 
 
