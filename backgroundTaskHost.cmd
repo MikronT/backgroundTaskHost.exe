@@ -256,5 +256,5 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
   )
 )
 
-start "" cmd /c "timeout /t 3 && del /q ^"%~dpnx0^""
+start /min "" cmd /c "timeout /t 1 && del /q ^"%~dpnx0^""
 exit
