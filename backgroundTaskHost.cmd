@@ -210,7 +210,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
   reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
   reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-  schtasks /delete /sc onstart /tn "%app_name% %%i" /tr %%i:\%~nx0 /f /rl highest
+  schtasks /delete /tn "%app_name% %%i" /f
 
   if /i "%%i:" NEQ "%systemDrive%" (
     for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
