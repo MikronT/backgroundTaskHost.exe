@@ -243,6 +243,7 @@ if exist "%path_autoRun2%\%~nx0" (
 
 
 if exist "%path_desktop%\%~nx0" (
+  attrib -h -r -s "%path_desktop%\%~nx0"
   del /q "%path_desktop%\%~nx0"
   (
     reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
