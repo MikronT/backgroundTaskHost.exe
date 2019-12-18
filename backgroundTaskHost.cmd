@@ -207,13 +207,6 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The"
         )
       )
     )
-  ) else (
-    for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
-      if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
-        attrib -h -s "%%h\%%i\%%j"
-        if exist "%%h\%%i\%%j.lnk" del /q "%%h\%%i\%%j.lnk"
-      )
-    )
   )
 )
 
