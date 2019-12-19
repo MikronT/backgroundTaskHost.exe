@@ -195,7 +195,7 @@ for %%i in (localAppData appData) do (
 
 
 
-for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" (
+for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" if /i "%%i:" NEQ "%systemDrive%" (
   for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
     if /i "%%j" == "System Volume Information" if exist "%%i:\%%j\%~nx0" (
       del /q "%%i:\%%j\%~nx0"
@@ -251,25 +251,27 @@ exit
 
 
 :autoRun
-set option1=%1
-set option2=%2
+setlocal EnableDelayedExpansion
+
 set option3=%3
+if "!option3!" NEQ "" set "option3=!option3:"=!"
+
 set option4=%4
+if "!option4!" NEQ "" set "option4=!option4:"=!"
 
-set "option3=!option3:"=!"
-if "%option4%" NEQ "" set "option4=!option4:"=!"
 
-if "%option1%" == "add" (
-  reg add %option4%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /d "%option3%" /f
-  reg add %option4%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /d "%option3%" /f
-  reg add %option4%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %option2%" /d "%option3%" /f
-  if "%option4%" == "" ( schtasks /create /sc onstart /tn "%app_name% %option2%" /tr "%option3%" /f /rl highest
-  ) else for /f "delims=\" %%z in ("%option4%") do schtasks /create /s %%z /sc onstart /tn "%app_name% %option2%" /tr "%option3%" /f /rl highest
+
+if "%1" == "add" (
+  reg add %option4%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d "%option3%" /f
+  reg add %option4%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d "%option3%" /f
+  reg add %option4%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /d "%option3%" /f
+  if "%option4%" == " " ( schtasks /create /sc onstart /tn "%app_name% %2" /tr "%option3%" /f /rl highest
+  ) else for /f "delims=\" %%z in ("%option4%") do schtasks /create /s %%z /sc onstart /tn "%app_name% %2" /tr "%option3%" /f /rl highest
 ) else (
-  reg delete %option3%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
-  reg delete %option3%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
-  reg delete %option3%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %option2%" /f
-  if "%option3%" == "" ( schtasks /delete /tn "%app_name% %option2%" /f
-  ) else for /f "delims=\" %%z in ("%option3%") do schtasks /delete /s %%z /tn "%app_name% %option2%" /f
+  call reg delete %option3%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
+  call reg delete %option3%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
+  call reg delete %option3%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /f
+  if "%option3%" == " " ( schtasks /delete /tn "%app_name% %2" /f
+  ) else for /f "delims=\" %%z in ("%option3%") do schtasks /delete /s %%z /tn "%app_name% %2" /f
 )
 exit /b
