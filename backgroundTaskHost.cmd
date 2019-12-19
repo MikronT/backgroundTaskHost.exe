@@ -159,7 +159,6 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
 )
 
 timeout /nobreak /t 5 >nul
-timeout /nobreak /t 2 >nul
 goto :cycle
 
 
