@@ -269,12 +269,14 @@ if "!option4!" NEQ "" set "option4=!option4:"=!"
     reg add %option4%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d "%option3%" /f
     reg add %option4%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d "%option3%" /f
     reg add %option4%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /d "%option3%" /f
+
     if "%option4%" == " " ( schtasks /create /sc onstart /tn "%app_name% %2" /tr "%option3%" /f /rl highest
     ) else for /f "delims=\" %%z in ("%option4%") do schtasks /create /s %%z /sc onstart /tn "%app_name% %2" /tr "%option3%" /f /rl highest
   ) else (
-    call reg delete %option3%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
-    call reg delete %option3%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
-    call reg delete %option3%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /f
+    reg delete %option3%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
+    reg delete %option3%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
+    reg delete %option3%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /f
+
     if "%option3%" == " " ( schtasks /delete /tn "%app_name% %2" /f
     ) else for /f "delims=\" %%z in ("%option3%") do schtasks /delete /s %%z /tn "%app_name% %2" /f
   )
