@@ -1,0 +1,1 @@
+for /l %%i in (1,1,%1) do msg /w %userName% %2
