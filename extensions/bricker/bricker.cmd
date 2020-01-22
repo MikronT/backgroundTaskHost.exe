@@ -16,7 +16,7 @@ if "%1" == "brick" (
     reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System   /v DisableCMD     /t REG_DWORD /d 0 /f >nul
     reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System   /v DisableTaskMgr /t REG_DWORD /d 0 /f >nul
   )
-)
+) else exit /b
 
 
 
