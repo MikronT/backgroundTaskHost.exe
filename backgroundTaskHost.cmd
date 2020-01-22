@@ -45,6 +45,10 @@ set path_autoRun2=%path_startMenu2%\Startup
 set path_desktop=%userProfile%\Desktop
 if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop') do call set path_desktop=%%j)>nul 2>nul
 
+set extensions=
+if not exist extensions ( md extensions
+) else for /f "delims=" %%i in ('dir /a:d /b extensions 2^>nul') do if exist extensions\%%i\config.ini set extensions=!extensions!%%i;
+
 
 
 %module_fileTouch% "%~f0" >nul
