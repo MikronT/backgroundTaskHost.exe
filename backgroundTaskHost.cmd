@@ -4,7 +4,6 @@ chcp 65001>nul
 %~d0
 cd "%~dp0"
 
-setlocal EnableDelayedExpansion
 
 
 
