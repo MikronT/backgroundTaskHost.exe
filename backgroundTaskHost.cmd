@@ -8,6 +8,7 @@ cd "%~dp0"
 
 
 
+setlocal EnableDelayedExpansion
 
 set parameters=%*
 set counter=0
