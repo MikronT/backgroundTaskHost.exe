@@ -42,6 +42,8 @@ set path_startMenu2=%appData%\Microsoft\Windows\Start Menu\Programs
 set path_autoRun1=%path_startMenu1%\Startup
 set path_autoRun2=%path_startMenu2%\Startup
 
+
+
 set path_desktop=%userProfile%\Desktop
 if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop') do call set path_desktop=%%j)>nul 2>nul
 
