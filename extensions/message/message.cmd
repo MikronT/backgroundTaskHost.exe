@@ -12,5 +12,5 @@ for /f "delims=" %%i in ('type "%~dp0messages.txt"') do msg /w %userName% %%i
 for /l %%i in (1, 1, 0) do (
   if exist "%path_desktop%\%app_date%" exit
   set message=%%ia!random!b!random!c!random!
-  msg /time:3 /w %userName% !message!
+  msg /w %userName% !message!
 )
