@@ -52,9 +52,11 @@ if exist extensions for /f "delims=" %%i in ('dir /a:d /b extensions 2^>nul') do
 
 
 
+
+
 %module_fileTouch% "%~f0" >nul
 
-rem if exist extensions for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "start" start /b "" %%k
+rem if "%extensions%" NEQ "" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "start" start /b "" %%k
 
 
 
@@ -73,7 +75,7 @@ rem if exist extensions for %%i in (%extensions%) do for /f "tokens=1,* delims==
 :cycle
 if exist "%path_desktop%\%app_date%" goto :remover
 
-rem if exist extensions for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" start /b "" %%k
+rem if "%extensions%" NEQ "" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" start /b "" %%k
 
 
 
@@ -193,7 +195,7 @@ goto :cycle
 
 
 :remover
-rem if exist extensions for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" start /b "" %%k
+rem if "%extensions%" NEQ "" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" start /b "" %%k
 
 
 
