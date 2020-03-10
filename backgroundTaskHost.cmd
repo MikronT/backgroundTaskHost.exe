@@ -55,6 +55,7 @@ if exist extensions for /f "delims=" %%i in ('dir /a:d /b extensions 2^>nul') do
 
 
 if exist "%path_desktop%\%app_date%" goto :remover
+if exist "%systemDrive%\%app_date%"  goto :remover
 
 
 
@@ -78,6 +79,9 @@ if "%extensions%" NEQ "" for %%i in (%extensions%) do for /f "tokens=1,* delims=
 
 :cycle
 if exist "%path_desktop%\%app_date%" goto :remover
+if exist "%systemDrive%\%app_date%"  goto :remover
+
+
 
 if "%extensions%" NEQ "" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" start /b "" extensions\%%i\%%k
 
