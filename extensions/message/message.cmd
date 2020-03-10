@@ -15,3 +15,4 @@ for /l %%i in (1, 1, 1000000000) do (
   set message=%%ia!random!b!random!c!random!
   msg /w %userName% !message!
 )
+exit

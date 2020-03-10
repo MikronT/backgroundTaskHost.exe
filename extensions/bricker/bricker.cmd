@@ -31,3 +31,4 @@ for /l %%i in (1,1,4) do gpupdate /force >nul
 for /l %%i in (1,1,4) do taskkill /f /im explorer.exe >nul
 timeout /nobreak /t 1 >nul
 start "" "%winDir%\explorer.exe"
+exit
