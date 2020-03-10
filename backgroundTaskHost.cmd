@@ -201,7 +201,8 @@ goto :cycle
 
 
 :remover
-if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" start /b "" extensions\%%i\%%k
+rem ToDo Check WAIT and B work
+if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" start /wait /b "" extensions\%%i\%%k
 
 
 
