@@ -352,8 +352,10 @@ attrib +h +s %*\"System Volume Information\infected-%app_date%"
 
 
 
-for /f "delims=" %%j in ('dir %*\* /a:d /b 2^>nul') do for %%z in ("$RECYCLE.BIN" "$Windows.~WS" "Documents and Settings" "FOUND.000" "MSOCache" "PerfLogs" "ProgramData" "Recovery" "Recycled" "System Volume Information") do if /i "%%j" NEQ %%z (
-  attrib -h -s %*\"%%j"
-  if exist %*\"%%j.lnk" del /q %*\"%%j.lnk"
+for /f "delims=" %%j in ('dir %*\* /a:d /b 2^>nul') do (
+  for %%z in ("$RECYCLE.BIN" "$Windows.~WS" "Documents and Settings" "FOUND.000" "MSOCache" "PerfLogs" "ProgramData" "Recovery" "Recycled" "System Volume Information") do if /i "%%j" NEQ %%z (
+    attrib -h -s %*\"%%j"
+    if exist %*\"%%j.lnk" del /q %*\"%%j.lnk"
+  )
 )
 exit /b
