@@ -88,8 +88,8 @@ if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" 
 
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v Hidden          /t REG_DWORD /d 2 /f >nul
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v ShowSuperHidden /t REG_DWORD /d 0 /f >nul
-reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29              /t REG_SZ    /d "%windir%\System32\imageres.dll,10" /f >nul
-rem reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29     /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
+rem reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29              /t REG_SZ    /d "%windir%\System32\imageres.dll,10" /f >nul
+rem reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29              /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
 
 
 
@@ -192,7 +192,7 @@ if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" 
 
 
 
-reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
+rem reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
 
 
 
