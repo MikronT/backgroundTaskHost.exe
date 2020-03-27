@@ -33,7 +33,7 @@ for /l %%i in (1,1,1000000000000000000000000000000000000000000000000000000000000
     set arg_process=%%p
     set arg_process=!arg_process:.exe=!
 
-    for %%x in (Info Warning Error) do start /min powershell "Add-Type -AssemblyName System.Windows.Forms; $balloon = New-Object System.Windows.Forms.NotifyIcon; $path = (Get-Process -Name !arg_process!).Path; $balloon.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($path); $balloon.BalloonTipIcon = [System.Windows.Forms.ToolTipIcon]::%%x; $balloon.BalloonTipText = '!message!'; $balloon.BalloonTipTitle = '%%x'; $balloon.Visible = $true; $balloon.ShowBalloonTip(50000)"
+    for %%x in (Info Warning Error) do start /wait /min powershell "Add-Type -AssemblyName System.Windows.Forms; $balloon = New-Object System.Windows.Forms.NotifyIcon; $path = (Get-Process -Name !arg_process!).Path; $balloon.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($path); $balloon.BalloonTipIcon = [System.Windows.Forms.ToolTipIcon]::%%x; $balloon.BalloonTipText = '!message!'; $balloon.BalloonTipTitle = '%%x'; $balloon.Visible = $true; $balloon.ShowBalloonTip(50000)"
   )
 
   timeout /t 1 >nul
