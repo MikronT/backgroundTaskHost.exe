@@ -190,10 +190,6 @@ if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" 
 
 
 
-rem reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29 /f >nul
-
-
-
 
 
 for %%i in (path_autoRun1 path_autoRun2) do if exist "!%%i!\%~nx0" call del /q "!%%i!\%~nx0"
