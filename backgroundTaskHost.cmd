@@ -78,7 +78,7 @@ if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" 
 
 
 :cycle
-for %%i in ("%path_desktop%\%app_date%" "%systemDrive%\%app_date%") do if exist %%i goto :remover
+for %%z in ("%path_desktop%\%app_date%" "%systemDrive%\%app_date%") do if exist %%z goto :remover
 
 
 
@@ -88,8 +88,6 @@ if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" 
 
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v Hidden          /t REG_DWORD /d 2 /f >nul
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v ShowSuperHidden /t REG_DWORD /d 0 /f >nul
-rem reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29              /t REG_SZ    /d "%windir%\System32\imageres.dll,10" /f >nul
-rem reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons" /v 29              /t REG_SZ    /d "%windir%\System32\shell32.dll,-50" /f >nul
 
 
 
@@ -123,8 +121,8 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
         if not exist "%%i:\%%j.lnk" (
           set counter=0
           for /f "delims=" %%y in ('dir "%%i:\%%j\*" /b 2^>nul') do set /a counter+=1
-          if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
-          ) else set icon=%WinDir%\System32\imageres.dll,153
+          if "!counter!" == "0" ( set icon=%winDir%\System32\shell32.dll,3
+          ) else set icon=%winDir%\System32\imageres.dll,153
 
           if exist "%%i:\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%i:\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
 
@@ -156,8 +154,8 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
         if not exist "%%h\%%i\%%j.lnk" (
           set counter=0
           for /f "delims=" %%y in ('dir "%%h\%%i\%%j\*" /b 2^>nul') do set /a counter+=1
-          if "!counter!" == "0" ( set icon=%WinDir%\System32\shell32.dll,3
-          ) else set icon=%WinDir%\System32\imageres.dll,153
+          if "!counter!" == "0" ( set icon=%winDir%\System32\shell32.dll,3
+          ) else set icon=%winDir%\System32\imageres.dll,153
 
           if exist "%%h\%%i\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%h\%%i\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
 
